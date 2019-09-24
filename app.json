@@ -21,6 +21,6 @@
     }
   ,
   "showMyCode": true,
-  "runtime": "2.0",
+  "runtime": "3.0",
   "target": "Internal"
 }
