@@ -39,5 +39,10 @@ tableextension 50100 "FAE-Company Information" extends 79
             DataClassification = ToBeClassified;
 
         }
+        field(50109; "Send FAE Automatic"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+
+        }
     }
 }
