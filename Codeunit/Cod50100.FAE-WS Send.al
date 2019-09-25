@@ -98,6 +98,9 @@ codeunit 50100 "FAE-WS Send"
         l_DnetStream: DotNet NETMemory;
         l_DnetArray: DotNet NETArray;
         l_Documents: array[40, 4] OF Text;
+        prueba: XmlPort "Export Contact";
+        recContact: Record Contact;
+        tempBlob: Record TempBlob;
     BEGIN
         IF IsVar.ISRECORD() THEN BEGIN
             Record.GETTABLE(IsVar);
@@ -110,20 +113,28 @@ codeunit 50100 "FAE-WS Send"
 
             //Assing XML Name
             XmlName := Field.Value();
-
+            XmlName += '.xml';
+            tempBlob.blob.CreateOutStream(FileOutStream);
             //Generate Xml File
-            XmlFile.CREATE(FilePath + XmlName + '.xml');
-            XmlFile.CREATEOUTSTREAM(FileOutStream);
+            //XmlFile.Create('c:\TEMP\prueba.xml');
+            //DownloadFromStream(FileInStream, '', FilePath, '', XmlName);
+            //XmlFile.CREATEOUTSTREAM(FileOutStream);
+
             CASE Record.NUMBER OF
                 DATABASE::"Sales Invoice Header":
                     BEGIN
+                        //recContact.get('CT200081');
                         SalesInvoiceHeader.SETFILTER("No.", FORMAT(Field.VALUE));
                         SalesInvoiceHeader.SETRANGE("Debit Memo", FALSE);
-                        //IF SalesInvoiceHeader.FINDFIRST THEN
-                        //XMLPORT.EXPORT(XMLPORT::"Export Sales Invoice",FileOutStream,SalesInvoiceHeader);
+                        IF SalesInvoiceHeader.FINDFIRST THEN
+                            //XMLPORT.EXPORT(XMLPORT::"Export Sales Invoice",FileOutStream,SalesInvoiceHeader);
+                            XMLPORT.EXPORT(XMLPORT::"Export Contact", FileOutStream, recContact);
+
                         SalesInvoiceHeader.SETRANGE("Debit Memo", TRUE);
                         //IF SalesInvoiceHeader.FINDFIRST THEN
                         //XMLPORT.EXPORT(XMLPORT::"Export Sales Debit Memo",FileOutStream,SalesInvoiceHeader);
+                        tempBlob.Blob.CreateInStream(FileInStream);
+
                     END;
                 DATABASE::"Sales Cr.Memo Header":
                     BEGIN
@@ -132,48 +143,48 @@ codeunit 50100 "FAE-WS Send"
                     END;
 
             END;
-            XmlFile.CLOSE;
+            //XmlFile.CLOSE;
 
-            WITH RecordLink DO BEGIN
-                // Insert XML in Record Link
-                RESET;
-                SETCURRENTKEY("Record ID");
-                SETRANGE("Record ID", Record.RECORDID);
-                SETRANGE(Type, Type::Link);
-                SETFILTER(Description, '%1', 'Electronic Invoice ' + XmlName);
-                IF FINDSET THEN BEGIN
-                    URL1 := FilePath + XmlName + '.xml';
-                    MODIFY;
-                END ELSE BEGIN
-                    INIT;
-                    "Record ID" := Record.RECORDID;
-                    Description := 'Electronic Invoice ' + XmlName;
-                    Type := Type::Link;
-                    "User ID" := USERID;
-                    Created := CURRENTDATETIME;
-                    URL1 := FilePath + XmlName + '.xml';
-                    Company := COMPANYNAME;
-                    INSERT;
-                END;
-                COMMIT;
+            // WITH RecordLink DO BEGIN
+            //     // Insert XML in Record Link
+            //     RESET;
+            //     SETCURRENTKEY("Record ID");
+            //     SETRANGE("Record ID", Record.RECORDID);
+            //     SETRANGE(Type, Type::Link);
+            //     SETFILTER(Description, '%1', 'Electronic Invoice ' + XmlName);
+            //     IF FINDSET THEN BEGIN
+            //         URL1 := FilePath + XmlName + '.xml';
+            //         MODIFY;
+            //     END ELSE BEGIN
+            //         INIT;
+            //         "Record ID" := Record.RECORDID;
+            //         Description := 'Electronic Invoice ' + XmlName;
+            //         Type := Type::Link;
+            //         "User ID" := USERID;
+            //         Created := CURRENTDATETIME;
+            //         URL1 := FilePath + XmlName + '.xml';
+            //         Company := COMPANYNAME;
+            //         INSERT;
+            //     END;
+            //     COMMIT;
 
-                CLEAR(ZipName);
-                CLEAR(ClientFileName);
-                CLEAR(ServerFileName);
-            END;
-            COMMIT;
+            //     CLEAR(ZipName);
+            //     CLEAR(ClientFileName);
+            //     CLEAR(ServerFileName);
+            // END;
+            // COMMIT;
 
             // Insert file in blob Field
-            ZipFile.OPEN(FORMAT(FilePath + XmlName + '.xml'));
-            ZipFile.CREATEINSTREAM(FileInStream);
+            //ZipFile.OPEN(FORMAT(FilePath + XmlName + '.xml'));
+            //ZipFile.CREATEINSTREAM(FileInStream);
             CASE Record.NUMBER OF
                 DATABASE::"Sales Invoice Header":
                     BEGIN
                         IF SalesInvoiceHeader.GET(FORMAT(Field.VALUE)) THEN BEGIN
                             SalesInvoiceHeader."Electronic Invoice Status" := SalesInvoiceHeader."Electronic Invoice Status"::"In process";
-                            COPYSTREAM(FileOutStream, FileInStream);
+                            //COPYSTREAM(FileOutStream, FileInStream);
                             SalesInvoiceHeader.MODIFY;
-                            SalesInvoiceHeader.ADDLINK(FilePath + XmlName + '.xml', 'Electronic Invoice Compressed ' + XmlName + '.xml');
+                            //SalesInvoiceHeader.ADDLINK(FilePath + XmlName + '.xml', 'Electronic Invoice Compressed ' + XmlName + '.xml');
                             l_DnetStream := l_DnetStream.MemoryStream;
                             COPYSTREAM(l_DnetStream, FileInStream);
                             l_DnetArray := l_DnetStream.GetBuffer();
@@ -195,7 +206,7 @@ codeunit 50100 "FAE-WS Send"
                         END;
                     END;
             END;
-            ZipFile.CLOSE;
+            //ZipFile.CLOSE;
         END;
     END;
 
@@ -327,8 +338,8 @@ codeunit 50100 "FAE-WS Send"
         PopulateXmlPrerequisites(XMLDoc, XMLNode, userName, password);
         XMLDOMManagement.AddElementWithPrefix(XMLNode, 'UploadRequest', '', 'inv', invTxt, CurrentXMlNode);
         XMLDOMManagement.AddElement(CurrentXMlNode, 'fileName', filename, '', XMLNode);
-        //XMLDOMManagement.AddElement(CurrentXMlNode, 'fileData', GetFileB64String(dnetArray), '', XMLNode);
-        XMLDOMManagement.AddElement(CurrentXMlNode, 'fileData', 'xxxxxx', '', XMLNode);
+        XMLDOMManagement.AddElement(CurrentXMlNode, 'fileData', GetFileB64String(dnetArray), '', XMLNode);
+        //XMLDOMManagement.AddElement(CurrentXMlNode, 'fileData', 'xxxxxx', '', XMLNode);
         XMLDOMManagement.AddElement(CurrentXMlNode, 'companyId', companyId, '', XMLNode);
         XMLDOMManagement.AddElement(CurrentXMlNode, 'accountId', accountId, '', XMLNode);
     END;

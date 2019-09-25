@@ -8,7 +8,7 @@
             "server": "http://MichelinWS",
             "serverInstance": "NAV",
             "authentication": "Windows",
-            "startupObjectId": 22,
+            "startupObjectId": 143,
             "startupObjectType": "Page",
             "breakOnError": true,
             "launchBrowser": true
