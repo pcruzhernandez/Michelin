@@ -43,6 +43,10 @@ pageextension 50100 "FAE-Company Information" extends "Company Information"
                 {
 
                 }
+                field("Send FAE Automatic"; "Send FAE Automatic")
+                {
+
+                }
             }
         }
     }

@@ -44,7 +44,7 @@ dotnet
         PublicKeyToken = 'b77a5c561934e089';
 
 
-        type(System.Xml.XmlDocument ; NetXmlDocument) {}
+        type(System.Xml.XmlDocument; NetXmlDocument) { }
 
 
         type(System.Xml.XmlNamespaceManager; NETXmlNamespaceManager) { }
@@ -163,7 +163,7 @@ codeunit 50100 "FAE-WS Send"
             END;
             COMMIT;
 
-            // Insert ZIP in blob Field
+            // Insert file in blob Field
             ZipFile.OPEN(FORMAT(FilePath + XmlName + '.xml'));
             ZipFile.CREATEINSTREAM(FileInStream);
             CASE Record.NUMBER OF
@@ -177,7 +177,7 @@ codeunit 50100 "FAE-WS Send"
                             l_DnetStream := l_DnetStream.MemoryStream;
                             COPYSTREAM(l_DnetStream, FileInStream);
                             l_DnetArray := l_DnetStream.GetBuffer();
-                            SendMethod(l_OpWebServices::Upload, XmlName + '.zip', FileInStream, l_DnetArray, SalesInvoiceHeader."No.", l_Documents, 112, 0);
+                            SendMethod(l_OpWebServices::Upload, XmlName + '.xml', FileInStream, l_DnetArray, SalesInvoiceHeader."No.", l_Documents, 112, 0);
                         END;
                     END;
                 DATABASE::"Sales Cr.Memo Header":
