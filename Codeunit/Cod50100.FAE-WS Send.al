@@ -77,7 +77,7 @@ codeunit 50100 "FAE-WS Send"
     PROCEDURE GenerateRecordLink(IsVar: Variant);
     VAR
 
-        CompanyInformation: Record 79;
+        EISetup: Record 50100;
         RecordLink: Record 2000000068;
         Record: RecordRef;
         Field: FieldRef;
@@ -104,9 +104,9 @@ codeunit 50100 "FAE-WS Send"
     BEGIN
         IF IsVar.ISRECORD() THEN BEGIN
             Record.GETTABLE(IsVar);
-            CompanyInformation.GET();
-            CompanyInformation.TESTFIELD("Electronic Invoice Path");
-            FilePath := CompanyInformation."Electronic Invoice Path";
+            EISetup.GET();
+            EISetup.TESTFIELD("Electronic Invoice Path");
+            FilePath := EISetup."Electronic Invoice Path";
             IF COPYSTR(FilePath, STRLEN(FilePath) - 1, 1) <> '\' THEN
                 FilePath += '\';
             Field := Record.FIELD(3);
@@ -125,12 +125,12 @@ codeunit 50100 "FAE-WS Send"
                     BEGIN
                         //recContact.get('CT200081');
                         SalesInvoiceHeader.SETFILTER("No.", FORMAT(Field.VALUE));
-                        SalesInvoiceHeader.SETRANGE("Debit Memo", FALSE);
+                        SalesInvoiceHeader.SETRANGE(SalesInvoiceHeader."Doc. Type DIAN", '91');
                         IF SalesInvoiceHeader.FINDFIRST THEN
                             //XMLPORT.EXPORT(XMLPORT::"Export Sales Invoice",FileOutStream,SalesInvoiceHeader);
                             XMLPORT.EXPORT(XMLPORT::"Export Contact", FileOutStream, recContact);
 
-                        SalesInvoiceHeader.SETRANGE("Debit Memo", TRUE);
+                        SalesInvoiceHeader.SETRANGE(SalesInvoiceHeader."Doc. Type DIAN", '92');
                         //IF SalesInvoiceHeader.FINDFIRST THEN
                         //XMLPORT.EXPORT(XMLPORT::"Export Sales Debit Memo",FileOutStream,SalesInvoiceHeader);
                         tempBlob.Blob.CreateInStream(FileInStream);
@@ -221,7 +221,7 @@ codeunit 50100 "FAE-WS Send"
         l_recSalesCrMemo: Record 114;
         l_recServiceInvoice: Record 5992;
         l_recServiceCrMemo: Record 5994;
-        l_recCompanyInfo: Record 79;
+        l_recEISetup: Record 50100;
         XMLDOMMgt: Codeunit 6224;
         ResponseText: Text;
         ResponseText2: Text;
@@ -235,9 +235,9 @@ codeunit 50100 "FAE-WS Send"
         senderAccount: Text;
         endpointURL: Text[50];
     BEGIN
-        l_recCompanyInfo.GET;
+        l_recEISetup.GET;
         g_numFactura := p_numfactura;
-        endpointURL := l_recCompanyInfo."Electronic Invoice Endpoint";
+        endpointURL := l_recEISetup."Electronic Invoice Endpoint";
         CASE p_tableID OF
             //VENTAS Y SERVICIOS
             112:
@@ -248,8 +248,8 @@ codeunit 50100 "FAE-WS Send"
                                 CLEAR(l_recSalesInvoice);
                                 l_recSalesInvoice.GET(p_numfactura);
                                 IF l_recSalesInvoice."XML Transaction ID" = '' THEN
-                                    UploadMethod(XMLDoc, p_texNombreFichero, '', l_recCompanyInfo."Electronic Invoice Company ID", l_recCompanyInfo."Elec. Inv. Account ID",
-                                                 l_recCompanyInfo."Electronic Invoice User", l_recCompanyInfo."Electronic Invoice Pass", p_dnetArray)
+                                    UploadMethod(XMLDoc, p_texNombreFichero, '', l_recEISetup."Electronic Invoice Company ID", l_recEISetup."Elec. Inv. Account ID",
+                                                 l_recEISetup."Electronic Invoice User", l_recEISetup."Electronic Invoice Pass", p_dnetArray)
                                 ELSE
                                     EXIT;
                             END;
@@ -258,13 +258,13 @@ codeunit 50100 "FAE-WS Send"
                                 CLEAR(l_recSalesInvoice);
                                 l_recSalesInvoice.GET(p_numfactura);
                                 IF l_recSalesInvoice."XML Transaction ID" <> '' THEN
-                                    DocumentStatusMethod(XMLDoc, l_recCompanyInfo."Electronic Invoice Company ID", l_recCompanyInfo."Elec. Inv. Account ID",
-                                                         l_recCompanyInfo."Electronic Invoice User", l_recCompanyInfo."Electronic Invoice Pass", l_recSalesInvoice."XML Transaction ID");
+                                    DocumentStatusMethod(XMLDoc, l_recEISetup."Electronic Invoice Company ID", l_recEISetup."Elec. Inv. Account ID",
+                                                         l_recEISetup."Electronic Invoice User", l_recEISetup."Electronic Invoice Pass", l_recSalesInvoice."XML Transaction ID");
                             END;
                         p_optMethod::DownloadDocuments:
                             BEGIN
-                                DownloadDocumentsMethod(XMLDoc, l_recCompanyInfo."Electronic Invoice Company ID", l_recCompanyInfo."Elec. Inv. Account ID",
-                                                         l_recCompanyInfo."Electronic Invoice User", l_recCompanyInfo."Electronic Invoice Pass", documentos);
+                                DownloadDocumentsMethod(XMLDoc, l_recEISetup."Electronic Invoice Company ID", l_recEISetup."Elec. Inv. Account ID",
+                                                         l_recEISetup."Electronic Invoice User", l_recEISetup."Electronic Invoice Pass", documentos);
                             END;
                     END;
                     cuHelper.setDataToSend(endpointURL, XMLDoc, g_numFactura, l_recSalesInvoice."XML Transaction ID");
@@ -277,8 +277,8 @@ codeunit 50100 "FAE-WS Send"
                                 CLEAR(l_recSalesCrMemo);
                                 l_recSalesCrMemo.GET(p_numfactura);
                                 IF l_recSalesCrMemo."XML Transaction ID" = '' THEN
-                                    UploadMethod(XMLDoc, p_texNombreFichero, '', l_recCompanyInfo."Electronic Invoice Company ID", l_recCompanyInfo."Elec. Inv. Account ID",
-                                                 l_recCompanyInfo."Electronic Invoice User", l_recCompanyInfo."Electronic Invoice Pass", p_dnetArray)
+                                    UploadMethod(XMLDoc, p_texNombreFichero, '', l_recEISetup."Electronic Invoice Company ID", l_recEISetup."Elec. Inv. Account ID",
+                                                 l_recEISetup."Electronic Invoice User", l_recEISetup."Electronic Invoice Pass", p_dnetArray)
                                 ELSE
                                     EXIT;
                             END;
@@ -287,13 +287,13 @@ codeunit 50100 "FAE-WS Send"
                                 CLEAR(l_recSalesCrMemo);
                                 l_recSalesCrMemo.GET(p_numfactura);
                                 IF l_recSalesCrMemo."XML Transaction ID" <> '' THEN
-                                    DocumentStatusMethod(XMLDoc, l_recCompanyInfo."Electronic Invoice Company ID", l_recCompanyInfo."Elec. Inv. Account ID",
-                                                         l_recCompanyInfo."Electronic Invoice User", l_recCompanyInfo."Electronic Invoice Pass", l_recSalesCrMemo."XML Transaction ID");
+                                    DocumentStatusMethod(XMLDoc, l_recEISetup."Electronic Invoice Company ID", l_recEISetup."Elec. Inv. Account ID",
+                                                         l_recEISetup."Electronic Invoice User", l_recEISetup."Electronic Invoice Pass", l_recSalesCrMemo."XML Transaction ID");
                             END;
                         p_optMethod::DownloadDocuments:
                             BEGIN
-                                DownloadDocumentsMethod(XMLDoc, l_recCompanyInfo."Electronic Invoice Company ID", l_recCompanyInfo."Elec. Inv. Account ID",
-                                                         l_recCompanyInfo."Electronic Invoice User", l_recCompanyInfo."Electronic Invoice Pass", documentos);
+                                DownloadDocumentsMethod(XMLDoc, l_recEISetup."Electronic Invoice Company ID", l_recEISetup."Elec. Inv. Account ID",
+                                                         l_recEISetup."Electronic Invoice User", l_recEISetup."Electronic Invoice Pass", documentos);
                             END;
                     END;
                     cuHelper.setDataToSend(endpointURL, XMLDoc, g_numFactura, l_recSalesCrMemo."XML Transaction ID");
@@ -338,7 +338,8 @@ codeunit 50100 "FAE-WS Send"
         PopulateXmlPrerequisites(XMLDoc, XMLNode, userName, password);
         XMLDOMManagement.AddElementWithPrefix(XMLNode, 'UploadRequest', '', 'inv', invTxt, CurrentXMlNode);
         XMLDOMManagement.AddElement(CurrentXMlNode, 'fileName', filename, '', XMLNode);
-        XMLDOMManagement.AddElement(CurrentXMlNode, 'fileData', GetFileB64String(dnetArray), '', XMLNode);
+
+
         //XMLDOMManagement.AddElement(CurrentXMlNode, 'fileData', 'xxxxxx', '', XMLNode);
         XMLDOMManagement.AddElement(CurrentXMlNode, 'companyId', companyId, '', XMLNode);
         XMLDOMManagement.AddElement(CurrentXMlNode, 'accountId', accountId, '', XMLNode);

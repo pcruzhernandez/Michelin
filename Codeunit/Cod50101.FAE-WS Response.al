@@ -6,7 +6,7 @@ codeunit 50101 "FAE-WS Response"
     end;
 
     var
-        CompanyInformation: Record 79;
+        EISetup: Record 50100;
         XMLDocGl: DotNet XmlDocument;
         endpointURL: Text;
         ContentTypeTxt: TextConst ENU = '"multipart/form-data; charset=utf-8"';
@@ -72,10 +72,10 @@ codeunit 50101 "FAE-WS Response"
         WebServiceUrl := endpointURL;
 
         //Construcci¢n  Proxy
-        CompanyInformation.GET();
+        EISetup.GET();
 
-        IF CompanyInformation."Use proxy" THEN
-            Proxy := Proxy.WebProxy(CompanyInformation.Proxy, CompanyInformation.Port);
+        IF EISetup."Use proxy" THEN
+            Proxy := Proxy.WebProxy(EISetup.Proxy, EISetup.Port);
 
         HttpWebRequest := HttpWebRequest.Create(WebServiceUrl);
         HttpWebRequest.Method := 'POST';
@@ -85,7 +85,7 @@ codeunit 50101 "FAE-WS Response"
         HttpWebRequest.ContentType := FORMAT(ContentTypeTxt);
         HttpWebRequest.Timeout := 600000;
         HttpWebRequest.AutomaticDecompression := DecompressionMethods.GZip;
-        IF CompanyInformation."Use proxy" THEN
+        IF EISetup."Use proxy" THEN
             HttpWebRequest.Proxy := Proxy;
 
 
