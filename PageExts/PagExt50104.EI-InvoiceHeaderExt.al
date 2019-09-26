@@ -2,6 +2,14 @@ pageextension 50104 "IE-InvoiceHeaderExt" extends "Sales Invoice"
 {
     layout
     {
+        modify("Doc. Type DIAN")
+        {
+            trigger OnAfterValidate()
+            begin
+                DocType();
+            end;
+        }
+
         addafter("Foreign Trade")
         {
             group("E-Invoice")
@@ -41,15 +49,6 @@ pageextension 50104 "IE-InvoiceHeaderExt" extends "Sales Invoice"
                     ApplicationArea = All;
                     Editable = ConceptEditable;
                 }
-                field("Doc. "; "Doc. Type DIAN")
-                {
-                    trigger OnValidate()
-                    var
-                        myInt: Integer;
-                    begin
-                        DocType();
-                    end;
-                }
             }
         }
     }
@@ -73,4 +72,8 @@ pageextension 50104 "IE-InvoiceHeaderExt" extends "Sales Invoice"
         end;
     end;
 
+    trigger OnOpenPage()
+    begin
+        DocType();
+    end;
 }
