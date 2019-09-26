@@ -74,6 +74,260 @@ codeunit 50100 "FAE-WS Send"
         MsgOK: TextConst ENU = 'File correctly loaded.';
         ErrTableID: TextConst ENU = 'Wrong ID Table.';
 
+    procedure Validations(p_NoDocument: Code[20])
+    var
+        Currency: Record 4;
+        Customer: Record 18;
+        CI01: TextConst ENU = 'The field "VAT Registration No." is empty in Company Information.;ESP=El campo "CIF/NIF" est  vac¡o en Informaci¢n de empresa.';
+        SalesLine: Record 37;
+        CompanyInfo: Record 79;
+        UnitOfMeasure: Record 204;
+        NoSeriesLine: Record 309;
+        Contact: Record 5050;
+        ContactBusinessRelation: Record 5054;
+        SalesInvoiceHeader: Record 112;
+        SalesCrMemoHeader: Record 114;
+        EI_Setup: Record 50100;
+        SalesHeader: record 36;
+        CI02: TextConst ENU = 'The field "VAT Registration Type" is empty in Company Information.;ESP=El campo "Tipo NIT/C‚dula" est  vac¡o en Informaci¢n de empresa.';
+        CI03: TextConst ENU = 'The field "Name" is empty in Company Information.;ESP=El campo "Nombre" est  vac¡o en Informaci¢n de empresa.';
+        CI04: TextConst ENU = 'The field "Address" is empty in Company Information.;ESP=El campo "Direcci¢n" est  vac¡o en Informaci¢n de empresa.';
+        CI05: TextConst ENU = 'The field "City" is empty in Company Information.;ESP=El campo "Ciudad" est  vac¡o en Informaci¢n de empresa.';
+        CI06: TextConst ENU = 'The field "Country/Region Code" is empty in Company Information.;ESP=El campo "C¢d. Pa¡s/Regi¢n" est  vac¡o en Informaci¢n de empresa.';
+        CI07: TextConst ENU = 'The field "Person Type Catalogue" is empty in Company Information.;ESP=El campo "Cat logo Tipo Persona" est  vac¡o en Informaci¢n de empresa.';
+        CI08: TextConst ENU = 'The field "ICA Tariff" is empty in Company Information.;ESP=El campo "Tarifa ICA" est  vac¡o en Informaci¢n de empresa.';
+        CI09: TextConst ENU = 'The field "Electronic Invloice Path" is empty in Company Information.;ESP=El campo "Ruta Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
+        CI10: TextConst ENU = 'The field "Electronic Invoice WDSL" is empty in Company Information.;ESP=El campo "WDSL Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
+        CI11: TextConst ENU = 'The field "Electronic Invoice User" is empty in Company Information.;ESP=El campo "Usuario Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
+        CI12: TextConst ENU = 'The field "Electronic Invoice Password" is empty in Company Information.;ESP=El campo "Contrase¤a Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
+        CI13: TextConst ENU = 'The field "Electronic Invoice CompanyID" is empty in Company Information.;ESP=El campo "IDCompa¤¡a Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
+        CI14: TextConst ENU = 'The field "Electronic Invoice AccountID" is empty in Company Information.;ESP=El campo "IDCuenta Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
+        CI15: TextConst ENU = 'The field "Proxy" is empty in Company Information.;ESP=El campo "Proxy" est  vac¡o en Informaci¢n de empresa.';
+        CI16: TextConst ENU = 'The field "Port" is empty in Company Information.;ESP=El campo "Puerto" est  vac¡o en Informaci¢n de empresa.';
+        CI17: TextConst ENU = 'The field "Business Registration No." is empty in Company Information.;ESP=El campo "N§ Matr¡cula Mercantil" est  vac¡o en Informaci¢n de empresa.';
+        CI18: TextConst ENU = 'The field "Electronic Invoice URLEndpoint" is empty in Company Information.;ESP=El campo "Endpoint URL Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
+        CI19: TextConst ENU = 'The field "Electronic Invoice Web Response" is empty in Company Information.;ESP=El campo "Web Respuesta Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
+        CO01: TextConst ENU = '"The field ""DIAN Code"" is empty in VAT Registration Type ";ESP="El campo ""C¢digo DIAN"" est  vac¡o en el tipo de registro de IVA "';
+        CO02: TextConst ENU = '"The field ""DIAN Table 20"" has no selected option in VAT Registration Type ";ESP="El campo ""DIAN Table 20"" no tiene opci¢n seleccionada en el tipo de registro de IVA "';
+        CU01: TextConst ENU = 'The field "VAT Registration No." is empty in Customer.;ESP=El campo "CIF/NIF" est  vac¡o en Cliente.';
+        CU02: TextConst ENU = 'The field "Fiscal Regimen" is empty in Customer.;ESP=El campo "Fiscal Regimen" est  vac¡o en Cliente.';
+        CU03: TextConst ENU = 'The field "Name" is empty in Customer.;ESP=El campo "Nombre" est  vac¡o en Cliente.';
+        CU04: TextConst ENU = 'The field "Name 2" is empty in Customer.;ESP=El campo "Nombre 2" est  vac¡o en Cliente.';
+        CU05: TextConst ENU = 'The field "Address" is empty in Customer.;ESP=El campo "Direcci¢n" est  vac¡o en Cliente.';
+        CU06: TextConst ENU = 'The field "City" is empty in Customer.;ESP=El campo "Ciudad" est  vac¡o en Cliente.';
+        CU07: TextConst ENU = 'The field "Country/Region Code" is empty in Customer.;ESP=El campo "C¢d. Pa¡s/Regi¢n" est  vac¡o en Cliente.';
+        CU08: TextConst ENU = 'The field "Regime Type" is empty in Customer.;ESP=El campo "Tipo R‚gimen" est  vac¡o en Cliente.';
+        CU09: TextConst ENU = 'There is no contact of Type "Contact" related to Customer.;ESP=No existe un contacto de Tipo "Contacto" vinculado al Cliente.';
+        CU10: TextConst ENU = 'The field "Phone No." is empty in Customer. Continue?;ESP=El campo "N§ Tel‚fono" est  vac¡o en Cliente. ¨Desea continuar?';
+        CU11: TextConst ENU = '"The field ""E-Mail"" is empty in Customer. ";ESP=El campo "Correo electr¢nico" est  vac¡o en Cliente.';
+        CU12: TextConst ENU = 'The field "Business Registration No." is empty in Customer.;ESP=El campo "N§ Matr¡cula Mercantil" est  vac¡o en Cliente.';
+        CU13: TextConst ENU = 'The field "Fiscal Responsabilities" is empty in Customer.;ESP=El campo "Fiscal Responsabilities" est  vac¡o en Cliente.';
+
+        DO01: TextConst ENU = '"Specifies ""Applies-to Doc. No."" in ";ESP="Especifique ""Liq. por N§ Documento"" en "';
+        DO02: TextConst ENU = '"""Applies-to Doc. Type"" must be ""Invoice"" in Credit Memo ";ESP="""Liq. por Tipo Documento"" debe ser ""Factura"" en Nota de cr‚dito "';
+        DO03: TextConst ENU = '"""Applies-to Doc. Type"" must be ""Credit Memo"" in Debit Note  ";ESP="""Liq. por Tipo Documento"" debe ser ""Abono"" en Nota de d‚bito "';
+        DO04: TextConst ENU = '"The field ""DIAN Code"" is empty in Currency ";ESP="El campo ""C¢digo DIAN"" est  vac¡o en Divisa "';
+        DO05: TextConst ENU = '"""Applies-to Doc. No."" must be a Sales Invoice in Credit Memo ";ESP="""Liq. por N§ Documento"" debe ser una Factura de Ventas en Nota de cr‚dito "';
+        DO06: TextConst ENU = '"""Applies-to Doc. No."" must be a Sales Credit Memo in Invoice ";ESP="""Liq. por N§ Documento"" debe ser una Nota de cr‚dito de Ventas en Nota de d‚bito "';
+        SE01: TextConst ENU = '"The field ""Resolution No."" is empty in No. Series Code ";ESP="El campo ""N§ resoluci¢n DIAN"" est  vac¡o en C¢d. N§ Serie "';
+        SE02: TextConst ENU = '"The field ""Resolution Date"" is empty in No. Series Code ";ESP="El campo ""Fecha resoluci¢n"" est  vac¡o en C¢d. N§ Serie "';
+        SE03: TextConst ENU = '"The field ""Resolution Expiration Date"" is empty in No. Series Code ";ESP="El campo ""Fecha vcto. resoluci¢n"" est  vac¡o en C¢d. N§ Serie "';
+        SE04: TextConst ENU = '"The field ""Prefix Numbering"" is empty in No. Series Code ";ESP="El campo ""Prefijo de numeraci¢n"" est  vac¡o en C¢d. N§ Serie "';
+        SE05: TextConst ENU = '"The field ""Doc. Type DIAN"" is empty in Sales Invoice";ESP="The field ""Doc. Type DIAN"" is empty in Factura de venta "';
+        SE06: TextConst ENU = '"The field ""Shiptment Port"" is empty in Sales Invoice";ESP="The field ""Shiptment Port"" is empty in Factura de venta "';
+        SE07: TextConst ENU = '"The field ""Destination Port"" is empty in Sales Invoice";ESP="The field ""Destination Port"" is empty in Factura de venta "';
+
+        SE08: TextConst ENU = '"The field ""Gross Weight"" is empty in Sales Invoice";ESP="The field ""Gross Weight"" is empty in Factura de venta "';
+        SE09: TextConst ENU = '"The field ""Shipping Information"" is empty in Sales Invoice";ESP="The field ""Shipping Information"" is empty in Factura de venta "';
+
+        SE10: TextConst ENU = '"The field ""Destination Port"" is empty in Sales Invoice";ESP="The field ""Destination Port"" is empty in Factura de venta "';
+        SE11: TextConst ENU = '"The field ""EIConcept"" is empty in Sales Invoice";ESP="The field ""EIConcept"" is empty in Factura de venta "';
+        IT01: TextConst ENU = '"The field ""DIAN Code"" is empty in Unit of Measure";ESP="El campo ""C¢digo DIAN"" est  vac¡o en Unidad de medida "';
+        PM01: TextConst ENU = '"The field ""Payment Means"" is empty in Payment Method";ESP="El campo ""Payment Means"" est  vac¡o en Unidad de medida "';
+
+        Canceled: TextConst ENU = 'Canceled by user.;ESP=Cancelado por el usuario.';
+        NoSeriesManagement: Codeunit 396;
+        PaymentMethod: Record "Payment Method";
+
+    begin
+        // Comprobaciones en Informaci¢n de empresa
+        CompanyInfo.GET;
+        EI_Setup.GET;
+
+        IF CompanyInfo."VAT Registration No." = '' THEN
+            ERROR(CI01);
+
+        //   VATRegistrationType.GET(CompanyInfo."VAT Registration Type");
+        //   IF VATRegistrationType."DIAN Code" = '' THEN
+        //     ERROR(CO01 + CompanyInfo."VAT Registration Type");
+
+        //   IF VATRegistrationType."DIAN Table 20" = VATRegistrationType."DIAN Table 20"::" " THEN
+        //     ERROR(CO02 + CompanyInfo."VAT Registration Type");
+
+        IF CompanyInfo.Name = '' THEN
+            ERROR(CI03);
+
+        IF CompanyInfo.Address = '' THEN
+            ERROR(CI04);
+
+        IF CompanyInfo.City = '' THEN
+            ERROR(CI05);
+
+        IF CompanyInfo."Country/Region Code" = '' THEN
+            ERROR(CI06);
+
+        IF EI_Setup."Electronic Invoice Company ID" = '' THEN
+            ERROR(CI13);
+
+        IF EI_Setup."Elec. Inv. Account ID" = '' THEN
+            ERROR(CI14);
+
+        IF (EI_Setup."Use proxy") AND (EI_Setup.Proxy = '') THEN
+            ERROR(CI15);
+
+        IF (EI_Setup."Use proxy") AND (EI_Setup.Port = 0) THEN
+            ERROR(CI16);
+
+        //>>CO-18-001-03
+        IF EI_Setup."Electronic Invoice Endpoint" = '' THEN
+            ERROR(CI18);
+
+
+
+
+
+
+        if SalesHeader.GET(SalesHeader."Document Type"::Invoice, p_NoDocument) then begin
+            // Comprobaciones en Cliente
+            Customer.GET(SalesHeader."Bill-to Customer No.");
+        end else begin
+            if salesHeader.GET(SalesHeader."Document Type"::"Credit Memo", p_NoDocument) then begin
+                Customer.GET(SalesHeader."Bill-to Customer No.");
+            end;
+        end;
+
+
+
+        IF Customer."VAT Registration No." = '' THEN
+            ERROR(CU01);
+
+        IF Customer."Fiscal Regime" = '' THEN
+            ERROR(CU02);
+
+        if Customer."Fiscal Responsabilities" = '' then
+            error(CU13);
+
+        IF Customer.Name = '' THEN
+            ERROR(CU03);
+
+        IF Customer.Address = '' THEN
+            ERROR(CU05);
+
+        IF Customer.City = '' THEN
+            ERROR(CU06);
+
+        IF Customer."Country/Region Code" = '' THEN
+            ERROR(CU07);
+
+        //   ContactBusinessRelation.SETRANGE("Link to Table",ContactBusinessRelation."Link to Table"::Customer);
+        //   ContactBusinessRelation.SETRANGE("No.",Customer."No.");
+        //   IF ContactBusinessRelation.FINDFIRST THEN BEGIN
+        //     Contact.SETRANGE("Company No.",ContactBusinessRelation."Contact No.");
+        //     Contact.SETRANGE("Contact Type Elect. Invoice",Contact."Contact Type Elect. Invoice"::Contact);
+        //     IF NOT Contact.FINDFIRST THEN
+        //       ERROR(CU09);
+        //     IF (Contact."Phone No." = '') AND (Customer."Phone No." = '') THEN BEGIN
+        //       IF NOT CONFIRM(CU10,FALSE) THEN
+        //         ERROR(Canceled);
+        //     END;
+
+        //     IF (Contact."E-Mail" = '') AND (Customer."E-Mail" = '') THEN
+        //       ERROR(CU11);
+        //   END ELSE
+        //     ERROR(CU09);
+
+        //   IF (VATRegistrationType."DIAN Table 20" = VATRegistrationType."DIAN Table 20"::"Legal Entity") AND (Customer."Business Registration No." = '') THEN
+        //     ERROR(CU12);
+
+        // Comprobaciones en cabecera
+
+        if SalesHeader."Doc. Type DIAN" = '' then
+            error(SE05);
+        if SalesHeader."Shiptment Port" = '' then
+            error(SE06);
+        if SalesHeader."Destination Port" = '' then
+            error(SE07);
+        if SalesHeader."Gross Weight" = '' then
+            error(SE08);
+        if SalesHeader."Shipping Information" = '' then
+            error(SE09);
+        if SalesHeader."Net Weight" = '' then
+            error(SE10);
+        if SalesHeader."EIConcept" = '' then
+            error(SE11);
+        //Control Paymenth Method
+        PaymentMethod.GET(SalesHeader."Payment Method Code");
+        if PaymentMethod."Payment Means" = '' then
+            Error(PM01);
+
+        //   IF ((SalesHeader."Document Type" = SalesHeader."Document Type"::"Credit Memo") OR
+        //     (SalesHeader."Document Type" = SalesHeader."Document Type"::"Return Order") OR
+        //     (((SalesHeader."Document Type" = SalesHeader."Document Type"::Invoice) OR
+        //     (SalesHeader."Document Type" = SalesHeader."Document Type"::Order)) AND (SalesHeader."Debit Memo"))) AND
+        //     (SalesHeader."Applies-to Doc. No." = '') THEN
+        //     ERROR(DO01 + FORMAT(SalesHeader."Document Type") + ' ' + SalesHeader."No.");
+
+        //   IF ((SalesHeader."Document Type" = SalesHeader."Document Type"::"Credit Memo") AND
+        //     (SalesHeader."Applies-to Doc. Type" <> SalesHeader."Applies-to Doc. Type"::Invoice)) THEN
+        //     ERROR(DO02 + SalesHeader."No.");
+
+        //   IF ((SalesHeader."Document Type" = SalesHeader."Document Type"::Invoice) OR
+        //     (SalesHeader."Document Type" = SalesHeader."Document Type"::Order)) AND (SalesHeader."Debit Memo") AND
+        //     (SalesHeader."Applies-to Doc. Type" <> SalesHeader."Applies-to Doc. Type"::"Credit Memo") THEN
+        //     ERROR(DO03 + SalesHeader."No.");
+
+        // //   IF Currency.GET(SalesHeader."Currency Code") AND (Currency."DIAN Code" = '') THEN
+        // //     ERROR(DO04 + SalesHeader."Currency Code");
+
+        //   IF (SalesHeader."Document Type" = SalesHeader."Document Type"::"Credit Memo") AND
+        //     (NOT SalesInvoiceHeader.GET(SalesHeader."Applies-to Doc. No.")) THEN
+        //     ERROR(DO05 + SalesHeader."No.");
+
+        //   IF ((SalesHeader."Document Type" = SalesHeader."Document Type"::Invoice) OR
+        //     (SalesHeader."Document Type" = SalesHeader."Document Type"::Order)) AND (SalesHeader."Debit Memo") AND
+        //     (NOT SalesCrMemoHeader.GET(SalesHeader."Applies-to Doc. No.")) THEN
+        //     ERROR(DO06 + SalesHeader."No.");
+
+        // Comprobaciones en N§ Serie
+        NoSeriesLine.SETRANGE("Series Code", SalesHeader."Posting No. Series");
+        NoSeriesLine.SETFILTER("Starting No.", '<=%1', NoSeriesManagement.GetNextNo(SalesHeader."Posting No. Series", SalesHeader."Posting Date", FALSE));
+        NoSeriesLine.SETFILTER("Ending No.", '>=%1', NoSeriesManagement.GetNextNo(SalesHeader."Posting No. Series", SalesHeader."Posting Date", FALSE));
+        IF NoSeriesLine.FINDFIRST THEN BEGIN
+            IF NoSeriesLine."Resolution No." = '' THEN
+                ERROR(SE01 + SalesHeader."Posting No. Series");
+
+            // IF NoSeriesLine."Resolution Date" = 0D THEN
+            //   ERROR(SE02 + SalesHeader."Posting No. Series");
+
+            // IF NoSeriesLine."Resolution Expiration Date" = 0D THEN
+            //   ERROR(SE03 + SalesHeader."Posting No. Series");
+
+            // IF (STRLEN(DELCHR(NoSeriesLine."Starting No.",'=','0123456789')) <> 0) AND (NoSeriesLine."Prefix Numbering" = '') THEN
+            //   ERROR(SE04 + SalesHeader."Posting No. Series");
+        END;
+
+        // Comprobaciones en l¡neas
+        SalesLine.SETRANGE("Document Type", SalesHeader."Document Type");
+        SalesLine.SETRANGE("Document No.", SalesHeader."No.");
+        SalesLine.SETFILTER("Unit of Measure Code", '<>%1', '');
+        IF SalesLine.FINDFIRST THEN
+            REPEAT
+                IF UnitOfMeasure.GET(SalesLine."Unit of Measure Code") THEN
+                    IF UnitOfMeasure."DIAN Code" = '' THEN
+                        ERROR(IT01 + UnitOfMeasure.Code);
+            UNTIL SalesLine.NEXT = 0;
+    end;
+
     PROCEDURE GenerateRecordLink(IsVar: Variant);
     VAR
 

@@ -49,19 +49,19 @@ pageextension 50104 "IE-InvoiceHeaderExt" extends "Sales Invoice"
         DocTypeIs02: Boolean;
         ConceptEditable: Boolean;
 
-        /*local procedure DocType()
-        var
-            myInt: Integer;
-        begin
-            if  Location = 02 then
-                DocTypeIs02 = true
-            else begin
-                DocTypeIs02 = false;
-                if (Location = 91) or (Location = 92) then
-                    ConceptEditable = true
-                else
-                    ConceptEditable = false;
-            end;
+    local procedure DocType()
+    var
+        myInt: Integer;
+    begin
+        if "Doc. Type DIAN" = '02' then
+            DocTypeIs02 := true
+        else begin
+            DocTypeIs02 := false;
+            if ("Doc. Type DIAN" = '91') or ("Doc. Type DIAN" = '92') then
+                ConceptEditable := true
+            else
+                ConceptEditable := false;
         end;
-        */
+    end;
+
 }
