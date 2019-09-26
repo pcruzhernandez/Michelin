@@ -5,6 +5,7 @@ page 50100 "IE-Setup"
     UsageCategory = Administration;
     SourceTable = "EI-Setup";
 
+
     layout
     {
         area(Content)
