@@ -10,7 +10,14 @@
   "help": "",
   "url": "",
   "logo": "./Images/CosmoLogo.png",
-  "dependencies": [],
+  "dependencies": [
+     {
+      "appId": "212f5f6a-96ee-48c5-80b8-1c38b672504a",
+      "name": "Tax Functionality Localization for Colombia",
+      "publisher": "Go2Latam",
+      "version": "1.0.0.32" 
+     }
+  ],
   "screenshots": [],
   "platform": "13.0.0.0",
   "application": "13.0.0.0",
