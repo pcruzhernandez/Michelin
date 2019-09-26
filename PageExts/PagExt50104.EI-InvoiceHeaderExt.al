@@ -41,6 +41,15 @@ pageextension 50104 "IE-InvoiceHeaderExt" extends "Sales Invoice"
                     ApplicationArea = All;
                     Editable = ConceptEditable;
                 }
+                field("Doc. "; "Doc. Type DIAN")
+                {
+                    trigger OnValidate()
+                    var
+                        myInt: Integer;
+                    begin
+                        DocType();
+                    end;
+                }
             }
         }
     }
