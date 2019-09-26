@@ -2,6 +2,15 @@ codeunit 50102 "FAE-Subscriber"
 {
     EventSubscriberInstance = StaticAutomatic;
 
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales-Post", 'OnBeforePostSalesDoc', '', true, true)]
+    procedure fncIEValidaciones(var SalesHeader: Record "Sales Header")
+    var
+        l_cuWSSend: Codeunit 50100;
+    begin
+        l_cuWSSend.Validations(SalesHeader."No.");
+    end;
+
+
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales-Post", 'OnAfterPostSalesDoc', '', true, true)]
     procedure fncIEAutomaticoFactura(SalesInvHdrNo: Code[20]; SalesCrMemoHdrNo: code[20])
     var
@@ -23,11 +32,5 @@ codeunit 50102 "FAE-Subscriber"
         end;
     end;
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales-Post", 'OnBeforePostSalesDoc', '', true, true)]
-    procedure fncIEValidaciones(var SalesHeader: Record "Sales Header")
-    var
-        l_cuWSSend: Codeunit 50100;
-    begin
-        l_cuWSSend.Validations(SalesHeader."No.");
-    end;
+
 }

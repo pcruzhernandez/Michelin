@@ -78,7 +78,7 @@ codeunit 50100 "FAE-WS Send"
     var
         Currency: Record 4;
         Customer: Record 18;
-        CI01: TextConst ENU = 'The field "VAT Registration No." is empty in Company Information.;ESP=El campo "CIF/NIF" est  vac¡o en Informaci¢n de empresa.';
+        CI01: TextConst ENU = 'The field "VAT Registration No." is empty in Company Information.', ESP = 'El campo "CIF/NIF" est  vac¡o en Informaci¢n de empresa.';
         SalesLine: Record 37;
         CompanyInfo: Record 79;
         UnitOfMeasure: Record 204;
@@ -89,63 +89,63 @@ codeunit 50100 "FAE-WS Send"
         SalesCrMemoHeader: Record 114;
         EI_Setup: Record 50100;
         SalesHeader: record 36;
-        CI02: TextConst ENU = 'The field "VAT Registration Type" is empty in Company Information.;ESP=El campo "Tipo NIT/C‚dula" est  vac¡o en Informaci¢n de empresa.';
-        CI03: TextConst ENU = 'The field "Name" is empty in Company Information.;ESP=El campo "Nombre" est  vac¡o en Informaci¢n de empresa.';
-        CI04: TextConst ENU = 'The field "Address" is empty in Company Information.;ESP=El campo "Direcci¢n" est  vac¡o en Informaci¢n de empresa.';
-        CI05: TextConst ENU = 'The field "City" is empty in Company Information.;ESP=El campo "Ciudad" est  vac¡o en Informaci¢n de empresa.';
-        CI06: TextConst ENU = 'The field "Country/Region Code" is empty in Company Information.;ESP=El campo "C¢d. Pa¡s/Regi¢n" est  vac¡o en Informaci¢n de empresa.';
-        CI07: TextConst ENU = 'The field "Person Type Catalogue" is empty in Company Information.;ESP=El campo "Cat logo Tipo Persona" est  vac¡o en Informaci¢n de empresa.';
-        CI08: TextConst ENU = 'The field "ICA Tariff" is empty in Company Information.;ESP=El campo "Tarifa ICA" est  vac¡o en Informaci¢n de empresa.';
-        CI09: TextConst ENU = 'The field "Electronic Invloice Path" is empty in Company Information.;ESP=El campo "Ruta Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
-        CI10: TextConst ENU = 'The field "Electronic Invoice WDSL" is empty in Company Information.;ESP=El campo "WDSL Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
-        CI11: TextConst ENU = 'The field "Electronic Invoice User" is empty in Company Information.;ESP=El campo "Usuario Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
-        CI12: TextConst ENU = 'The field "Electronic Invoice Password" is empty in Company Information.;ESP=El campo "Contrase¤a Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
-        CI13: TextConst ENU = 'The field "Electronic Invoice CompanyID" is empty in Company Information.;ESP=El campo "IDCompa¤¡a Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
-        CI14: TextConst ENU = 'The field "Electronic Invoice AccountID" is empty in Company Information.;ESP=El campo "IDCuenta Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
-        CI15: TextConst ENU = 'The field "Proxy" is empty in Company Information.;ESP=El campo "Proxy" est  vac¡o en Informaci¢n de empresa.';
-        CI16: TextConst ENU = 'The field "Port" is empty in Company Information.;ESP=El campo "Puerto" est  vac¡o en Informaci¢n de empresa.';
-        CI17: TextConst ENU = 'The field "Business Registration No." is empty in Company Information.;ESP=El campo "N§ Matr¡cula Mercantil" est  vac¡o en Informaci¢n de empresa.';
-        CI18: TextConst ENU = 'The field "Electronic Invoice URLEndpoint" is empty in Company Information.;ESP=El campo "Endpoint URL Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
-        CI19: TextConst ENU = 'The field "Electronic Invoice Web Response" is empty in Company Information.;ESP=El campo "Web Respuesta Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
-        CO01: TextConst ENU = '"The field ""DIAN Code"" is empty in VAT Registration Type ";ESP="El campo ""C¢digo DIAN"" est  vac¡o en el tipo de registro de IVA "';
-        CO02: TextConst ENU = '"The field ""DIAN Table 20"" has no selected option in VAT Registration Type ";ESP="El campo ""DIAN Table 20"" no tiene opci¢n seleccionada en el tipo de registro de IVA "';
-        CU01: TextConst ENU = 'The field "VAT Registration No." is empty in Customer.;ESP=El campo "CIF/NIF" est  vac¡o en Cliente.';
-        CU02: TextConst ENU = 'The field "Fiscal Regimen" is empty in Customer.;ESP=El campo "Fiscal Regimen" est  vac¡o en Cliente.';
-        CU03: TextConst ENU = 'The field "Name" is empty in Customer.;ESP=El campo "Nombre" est  vac¡o en Cliente.';
-        CU04: TextConst ENU = 'The field "Name 2" is empty in Customer.;ESP=El campo "Nombre 2" est  vac¡o en Cliente.';
-        CU05: TextConst ENU = 'The field "Address" is empty in Customer.;ESP=El campo "Direcci¢n" est  vac¡o en Cliente.';
-        CU06: TextConst ENU = 'The field "City" is empty in Customer.;ESP=El campo "Ciudad" est  vac¡o en Cliente.';
-        CU07: TextConst ENU = 'The field "Country/Region Code" is empty in Customer.;ESP=El campo "C¢d. Pa¡s/Regi¢n" est  vac¡o en Cliente.';
-        CU08: TextConst ENU = 'The field "Regime Type" is empty in Customer.;ESP=El campo "Tipo R‚gimen" est  vac¡o en Cliente.';
-        CU09: TextConst ENU = 'There is no contact of Type "Contact" related to Customer.;ESP=No existe un contacto de Tipo "Contacto" vinculado al Cliente.';
-        CU10: TextConst ENU = 'The field "Phone No." is empty in Customer. Continue?;ESP=El campo "N§ Tel‚fono" est  vac¡o en Cliente. ¨Desea continuar?';
-        CU11: TextConst ENU = '"The field ""E-Mail"" is empty in Customer. ";ESP=El campo "Correo electr¢nico" est  vac¡o en Cliente.';
-        CU12: TextConst ENU = 'The field "Business Registration No." is empty in Customer.;ESP=El campo "N§ Matr¡cula Mercantil" est  vac¡o en Cliente.';
-        CU13: TextConst ENU = 'The field "Fiscal Responsabilities" is empty in Customer.;ESP=El campo "Fiscal Responsabilities" est  vac¡o en Cliente.';
+        CI02: TextConst ENU = 'The field "VAT Registration Type" is empty in Company Information.', ESP = 'El campo "Tipo NIT/C‚dula" est  vac¡o en Informaci¢n de empresa.';
+        CI03: TextConst ENU = 'The field "Name" is empty in Company Information.', ESP = 'El campo "Nombre" est  vac¡o en Informaci¢n de empresa.';
+        CI04: TextConst ENU = 'The field "Address" is empty in Company Information.', ESP = 'El campo "Direcci¢n" est  vac¡o en Informaci¢n de empresa.';
+        CI05: TextConst ENU = 'The field "City" is empty in Company Information.', ESP = 'El campo "Ciudad" est  vac¡o en Informaci¢n de empresa.';
+        CI06: TextConst ENU = 'The field "Country/Region Code" is empty in Company Information.', ESP = 'El campo "C¢d. Pa¡s/Regi¢n" est  vac¡o en Informaci¢n de empresa.';
+        CI07: TextConst ENU = 'The field "Person Type Catalogue" is empty in Company Information.', ESP = 'El campo "Cat logo Tipo Persona" est  vac¡o en Informaci¢n de empresa.';
+        CI08: TextConst ENU = 'The field "ICA Tariff" is empty in Company Information.', ESP = 'El campo "Tarifa ICA" est  vac¡o en Informaci¢n de empresa.';
+        CI09: TextConst ENU = 'The field "Electronic Invloice Path" is empty in Company Information.', ESP = 'El campo "Ruta Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
+        CI10: TextConst ENU = 'The field "Electronic Invoice WDSL" is empty in EI_Setup.', ESP = 'El campo "WDSL Facturaci¢n Electr¢nica" est  vac¡o en EI_Setup.';
+        CI11: TextConst ENU = 'The field "Electronic Invoice User" is empty in EI_Setup.', ESP = 'El campo "Usuario Facturaci¢n Electr¢nica" est  vac¡o en EI_Setup.';
+        CI12: TextConst ENU = 'The field "Electronic Invoice Password" is empty in EI_Setup.', ESP = 'El campo "Contrase¤a Facturaci¢n Electr¢nica" est  vac¡o en EI_Setup.';
+        CI13: TextConst ENU = 'The field "Electronic Invoice CompanyID" is empty in EI_Setup.', ESP = 'El campo "IDCompa¤¡a Facturaci¢n Electr¢nica" est  vac¡o en EI_Setup.';
+        CI14: TextConst ENU = 'The field "Electronic Invoice AccountID" is empty in EI_Setup.', ESP = 'El campo "IDCuenta Facturaci¢n Electr¢nica" est  vac¡o en EI_Setup.';
+        CI15: TextConst ENU = 'The field "Proxy" is empty in EI_Setup.', ESP = 'El campo "Proxy" est  vac¡o en EI_Setup.';
+        CI16: TextConst ENU = 'The field "Port" is empty in EI_Setup.', ESP = 'El campo "Puerto" est  vac¡o en EI_Setup.';
+        CI17: TextConst ENU = 'The field "Business Registration No." is empty in Company Information.', ESP = 'El campo "N§ Matr¡cula Mercantil" est  vac¡o en Informaci¢n de empresa.';
+        CI18: TextConst ENU = 'The field "Electronic Invoice URLEndpoint" is empty in EI_Setup.', ESP = 'El campo "Endpoint URL Facturaci¢n Electr¢nica" est  vac¡o en EI_Setup.';
+        CI19: TextConst ENU = 'The field "Electronic Invoice Web Response" is empty in Company Information.', ESP = 'El campo "Web Respuesta Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
+        CO01: TextConst ENU = '"The field ""DIAN Code"" is empty in VAT Registration Type "', ESP = '"El campo ""C¢digo DIAN"" est  vac¡o en el tipo de registro de IVA "';
+        CO02: TextConst ENU = '"The field ""DIAN Table 20"" has no selected option in VAT Registration Type "', ESP = '"El campo ""DIAN Table 20"" no tiene opci¢n seleccionada en el tipo de registro de IVA "';
+        CU01: TextConst ENU = 'The field "VAT Registration No." is empty in Customer.', ESP = 'El campo "CIF/NIF" est  vac¡o en Cliente.';
+        CU02: TextConst ENU = 'The field "Fiscal Regimen" is empty in Customer.', ESP = 'El campo "Fiscal Regimen" est  vac¡o en Cliente.';
+        CU03: TextConst ENU = 'The field "Name" is empty in Customer.', ESP = 'El campo "Nombre" est  vac¡o en Cliente.';
+        CU04: TextConst ENU = 'The field "Name 2" is empty in Customer.', ESP = 'El campo "Nombre 2" est  vac¡o en Cliente.';
+        CU05: TextConst ENU = 'The field "Address" is empty in Customer.', ESP = 'El campo "Direcci¢n" est  vac¡o en Cliente.';
+        CU06: TextConst ENU = 'The field "City" is empty in Customer.', ESP = 'El campo "Ciudad" est  vac¡o en Cliente.';
+        CU07: TextConst ENU = 'The field "Country/Region Code" is empty in Customer.', ESP = 'El campo "C¢d. Pa¡s/Regi¢n" est  vac¡o en Cliente.';
+        CU08: TextConst ENU = 'The field "Regime Type" is empty in Customer.', ESP = 'El campo "Tipo R‚gimen" est  vac¡o en Cliente.';
+        CU09: TextConst ENU = 'There is no contact of Type "Contact" related to Customer.', ESP = 'No existe un contacto de Tipo "Contacto" vinculado al Cliente.';
+        CU10: TextConst ENU = 'The field "Phone No." is empty in Customer. Continue?', ESP = 'El campo "N§ Tel‚fono" est  vac¡o en Cliente. ¨Desea continuar?';
+        CU11: TextConst ENU = '"The field ""E-Mail"" is empty in Customer. "', ESP = 'El campo "Correo electr¢nico" est  vac¡o en Cliente.';
+        CU12: TextConst ENU = 'The field "Business Registration No." is empty in Customer.', ESP = 'El campo "N§ Matr¡cula Mercantil" est  vac¡o en Cliente.';
+        CU13: TextConst ENU = 'The field "Fiscal Responsabilities" is empty in Customer.', ESP = 'El campo "Fiscal Responsabilities" est  vac¡o en Cliente.';
 
-        DO01: TextConst ENU = '"Specifies ""Applies-to Doc. No."" in ";ESP="Especifique ""Liq. por N§ Documento"" en "';
-        DO02: TextConst ENU = '"""Applies-to Doc. Type"" must be ""Invoice"" in Credit Memo ";ESP="""Liq. por Tipo Documento"" debe ser ""Factura"" en Nota de cr‚dito "';
-        DO03: TextConst ENU = '"""Applies-to Doc. Type"" must be ""Credit Memo"" in Debit Note  ";ESP="""Liq. por Tipo Documento"" debe ser ""Abono"" en Nota de d‚bito "';
-        DO04: TextConst ENU = '"The field ""DIAN Code"" is empty in Currency ";ESP="El campo ""C¢digo DIAN"" est  vac¡o en Divisa "';
-        DO05: TextConst ENU = '"""Applies-to Doc. No."" must be a Sales Invoice in Credit Memo ";ESP="""Liq. por N§ Documento"" debe ser una Factura de Ventas en Nota de cr‚dito "';
-        DO06: TextConst ENU = '"""Applies-to Doc. No."" must be a Sales Credit Memo in Invoice ";ESP="""Liq. por N§ Documento"" debe ser una Nota de cr‚dito de Ventas en Nota de d‚bito "';
-        SE01: TextConst ENU = '"The field ""Resolution No."" is empty in No. Series Code ";ESP="El campo ""N§ resoluci¢n DIAN"" est  vac¡o en C¢d. N§ Serie "';
-        SE02: TextConst ENU = '"The field ""Resolution Date"" is empty in No. Series Code ";ESP="El campo ""Fecha resoluci¢n"" est  vac¡o en C¢d. N§ Serie "';
-        SE03: TextConst ENU = '"The field ""Resolution Expiration Date"" is empty in No. Series Code ";ESP="El campo ""Fecha vcto. resoluci¢n"" est  vac¡o en C¢d. N§ Serie "';
-        SE04: TextConst ENU = '"The field ""Prefix Numbering"" is empty in No. Series Code ";ESP="El campo ""Prefijo de numeraci¢n"" est  vac¡o en C¢d. N§ Serie "';
-        SE05: TextConst ENU = '"The field ""Doc. Type DIAN"" is empty in Sales Invoice";ESP="The field ""Doc. Type DIAN"" is empty in Factura de venta "';
-        SE06: TextConst ENU = '"The field ""Shiptment Port"" is empty in Sales Invoice";ESP="The field ""Shiptment Port"" is empty in Factura de venta "';
-        SE07: TextConst ENU = '"The field ""Destination Port"" is empty in Sales Invoice";ESP="The field ""Destination Port"" is empty in Factura de venta "';
+        DO01: TextConst ENU = '"Specifies ""Applies-to Doc. No."" in "', ESP = '"Especifique ""Liq. por N§ Documento"" en "';
+        DO02: TextConst ENU = '"""Applies-to Doc. Type"" must be ""Invoice"" in Credit Memo "', ESP = '"""Liq. por Tipo Documento"" debe ser ""Factura"" en Nota de cr‚dito "';
+        DO03: TextConst ENU = '"""Applies-to Doc. Type"" must be ""Credit Memo"" in Debit Note  "', ESP = '"""Liq. por Tipo Documento"" debe ser ""Abono"" en Nota de d‚bito "';
+        DO04: TextConst ENU = '"The field ""DIAN Code"" is empty in Currency "', ESP = '"El campo ""C¢digo DIAN"" est  vac¡o en Divisa "';
+        DO05: TextConst ENU = '"""Applies-to Doc. No."" must be a Sales Invoice in Credit Memo "', ESP = '"""Liq. por N§ Documento"" debe ser una Factura de Ventas en Nota de cr‚dito "';
+        DO06: TextConst ENU = '"""Applies-to Doc. No."" must be a Sales Credit Memo in Invoice "', ESP = '"""Liq. por N§ Documento"" debe ser una Nota de cr‚dito de Ventas en Nota de d‚bito "';
+        SE01: TextConst ENU = '"The field ""Resolution No."" is empty in No. Series Code "', ESP = '"El campo ""N§ resoluci¢n DIAN"" est  vac¡o en C¢d. N§ Serie "';
+        SE02: TextConst ENU = '"The field ""Resolution Date"" is empty in No. Series Code "', ESP = '"El campo ""Fecha resoluci¢n"" est  vac¡o en C¢d. N§ Serie "';
+        SE03: TextConst ENU = '"The field ""Resolution Expiration Date"" is empty in No. Series Code "', ESP = '"El campo ""Fecha vcto. resoluci¢n"" est  vac¡o en C¢d. N§ Serie "';
+        SE04: TextConst ENU = '"The field ""Prefix Numbering"" is empty in No. Series Code "', ESP = '"El campo ""Prefijo de numeraci¢n"" est  vac¡o en C¢d. N§ Serie "';
+        SE05: TextConst ENU = '"The field ""Doc. Type DIAN"" is empty in Sales Invoice"', ESP = '"The field ""Doc. Type DIAN"" is empty in Factura de venta "';
+        SE06: TextConst ENU = '"The field ""Shiptment Port"" is empty in Sales Invoice"', ESP = '"The field ""Shiptment Port"" is empty in Factura de venta "';
+        SE07: TextConst ENU = '"The field ""Destination Port"" is empty in Sales Invoice"', ESP = '"The field ""Destination Port"" is empty in Factura de venta "';
 
-        SE08: TextConst ENU = '"The field ""Gross Weight"" is empty in Sales Invoice";ESP="The field ""Gross Weight"" is empty in Factura de venta "';
-        SE09: TextConst ENU = '"The field ""Shipping Information"" is empty in Sales Invoice";ESP="The field ""Shipping Information"" is empty in Factura de venta "';
+        SE08: TextConst ENU = '"The field ""Gross Weight"" is empty in Sales Invoice"', ESP = '"The field ""Gross Weight"" is empty in Factura de venta "';
+        SE09: TextConst ENU = '"The field ""Shipping Information"" is empty in Sales Invoice"', ESP = '"The field ""Shipping Information"" is empty in Factura de venta "';
 
-        SE10: TextConst ENU = '"The field ""Destination Port"" is empty in Sales Invoice";ESP="The field ""Destination Port"" is empty in Factura de venta "';
-        SE11: TextConst ENU = '"The field ""EIConcept"" is empty in Sales Invoice";ESP="The field ""EIConcept"" is empty in Factura de venta "';
-        IT01: TextConst ENU = '"The field ""DIAN Code"" is empty in Unit of Measure";ESP="El campo ""C¢digo DIAN"" est  vac¡o en Unidad de medida "';
-        PM01: TextConst ENU = '"The field ""Payment Means"" is empty in Payment Method";ESP="El campo ""Payment Means"" est  vac¡o en Unidad de medida "';
+        SE10: TextConst ENU = '"The field ""Destination Port"" is empty in Sales Invoice"', ESP = '"The field ""Destination Port"" is empty in Factura de venta "';
+        SE11: TextConst ENU = '"The field ""EIConcept"" is empty in Sales Invoice"', ESP = '"The field ""EIConcept"" is empty in Factura de venta "';
+        IT01: TextConst ENU = '"The field ""DIAN Code"" is empty in Unit of Measure"', ESP = '"El campo ""C¢digo DIAN"" est  vac¡o en Unidad de medida "';
+        PM01: TextConst ENU = '"The field ""Payment Means"" is empty in Payment Method"', ESP = '"El campo ""Payment Means"" est  vac¡o en Unidad de medida "';
 
-        Canceled: TextConst ENU = 'Canceled by user.;ESP=Cancelado por el usuario.';
+        Canceled: TextConst ENU = 'Canceled by user.', ESP = 'Cancelado por el usuario.';
         NoSeriesManagement: Codeunit 396;
         PaymentMethod: Record "Payment Method";
 
@@ -377,18 +377,17 @@ codeunit 50100 "FAE-WS Send"
             CASE Record.NUMBER OF
                 DATABASE::"Sales Invoice Header":
                     BEGIN
-                        //recContact.get('CT200081');
                         SalesInvoiceHeader.SETFILTER("No.", FORMAT(Field.VALUE));
                         SalesInvoiceHeader.SETRANGE(SalesInvoiceHeader."Doc. Type DIAN", '91');
                         IF SalesInvoiceHeader.FINDFIRST THEN
-                            //XMLPORT.EXPORT(XMLPORT::"Export Sales Invoice",FileOutStream,SalesInvoiceHeader);
-                            XMLPORT.EXPORT(XMLPORT::"Export Contact", FileOutStream, recContact);
+                            XMLPORT.EXPORT(XMLPORT::"EI-ExportInvoice", FileOutStream, SalesInvoiceHeader);
 
+                        SalesInvoiceHeader.SETFILTER("No.", FORMAT(Field.VALUE));
                         SalesInvoiceHeader.SETRANGE(SalesInvoiceHeader."Doc. Type DIAN", '92');
-                        //IF SalesInvoiceHeader.FINDFIRST THEN
-                        //XMLPORT.EXPORT(XMLPORT::"Export Sales Debit Memo",FileOutStream,SalesInvoiceHeader);
-                        tempBlob.Blob.CreateInStream(FileInStream);
+                        IF SalesInvoiceHeader.FINDFIRST THEN
+                            XMLPORT.EXPORT(XMLPORT::"EI-ExportInvoice", FileOutStream, SalesInvoiceHeader);
 
+                        tempBlob.Blob.CreateInStream(FileInStream);
                     END;
                 DATABASE::"Sales Cr.Memo Header":
                     BEGIN
@@ -449,7 +448,7 @@ codeunit 50100 "FAE-WS Send"
                     BEGIN
                         IF SalesCrMemoHeader.GET(FORMAT(Field.VALUE)) THEN BEGIN
                             SalesCrMemoHeader."Electronic Invoice Status" := SalesCrMemoHeader."Electronic Invoice Status"::"In process";
-                            COPYSTREAM(FileOutStream, FileInStream);
+                            //COPYSTREAM(FileOutStream, FileInStream);
                             SalesCrMemoHeader.MODIFY;
                             SalesCrMemoHeader.ADDLINK(FilePath + XmlName + '.xml', 'Electronic Invoice Compressed ' + XmlName + '.xml');
                             l_DnetStream := l_DnetStream.MemoryStream;
