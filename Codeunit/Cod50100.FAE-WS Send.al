@@ -109,7 +109,7 @@ codeunit 50100 "FAE-WS Send"
         CI19: TextConst ENU = 'The field "Electronic Invoice Web Response" is empty in Company Information.', ESP = 'El campo "Web Respuesta Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
         CO01: TextConst ENU = '"The field ""DIAN Code"" is empty in VAT Registration Type "', ESP = '"El campo ""C¢digo DIAN"" est  vac¡o en el tipo de registro de IVA "';
         CO02: TextConst ENU = '"The field ""DIAN Table 20"" has no selected option in VAT Registration Type "', ESP = '"El campo ""DIAN Table 20"" no tiene opci¢n seleccionada en el tipo de registro de IVA "';
-        CU01: TextConst ENU = 'The field "VAT Registration No." is empty in Customer.', ESP = 'El campo "CIF/NIF" est  vac¡o en Cliente.';
+        CU01: TextConst ENU = 'The field VAT Registration No. is empty in Customer.', ESP = 'El campo CIF/NIF est  vac¡o en Cliente.';
         CU02: TextConst ENU = 'The field "Fiscal Regimen" is empty in Customer.', ESP = 'El campo "Fiscal Regimen" est  vac¡o en Cliente.';
         CU03: TextConst ENU = 'The field "Name" is empty in Customer.', ESP = 'El campo "Nombre" est  vac¡o en Cliente.';
         CU04: TextConst ENU = 'The field "Name 2" is empty in Customer.', ESP = 'El campo "Nombre 2" est  vac¡o en Cliente.';
@@ -263,8 +263,9 @@ codeunit 50100 "FAE-WS Send"
             error(SE09);
         if SalesHeader."Net Weight" = '' then
             error(SE10);
-        if SalesHeader."EIConcept" = '' then
-            error(SE11);
+        if (SalesHeader."Doc. Type DIAN" = '91') or (SalesHeader."Doc. Type DIAN" = '92') then
+            if SalesHeader."EIConcept" = '' then
+                error(SE11);
         //Control Paymenth Method
         PaymentMethod.GET(SalesHeader."Payment Method Code");
         if PaymentMethod."Payment Means" = '' then
