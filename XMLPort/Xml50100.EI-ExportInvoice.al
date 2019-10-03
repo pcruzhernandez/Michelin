@@ -1,7 +1,7 @@
 xmlport 50100 "EI-ExportInvoice"
 {
     Format = Xml;
-
+    Direction = Export;
     schema
     {
         textelement(Factura)
@@ -135,16 +135,28 @@ xmlport 50100 "EI-ExportInvoice"
                 trigger OnAfterGetRecord()
                 begin
                     Clear(Customer);
-                    Customer.get(ENC."Sell-to Customer No.");
+                    Customer.get(ENC."Bill-to Customer No.");
 
                     Clear(PostCodeCustomer);
-                    PostCodeCustomer.Get(Customer."Post Code");
+                    PostCodeCustomer.Get(Customer."Post Code", customer.City);
+
+                    Clear(PostCodeShipTo);
+                    PostCodeShipTo.Get(ENC."Ship-to Post Code", enc."Ship-to City");
 
                     clear(CountryRegionCustomer);
                     CountryRegionCustomer.Get(Customer."Country/Region Code");
 
                     Clear(Currency);
                     Currency.get(ENC."Currency Code");
+
+                    Clear(PaymentMethod);
+                    PaymentMethod.Get(ENC."Payment Method Code");
+
+                    clear(NoSerieLine);
+                    NoSerieLine.setrange("Series Code", ENC."No. Series");
+                    NoSerieLine.SetFilter("Starting No.", '<=%1', ENC."No.");
+                    NoSerieLine.SetFilter("Ending No.", '>=%1', ENC."No.");
+                    NoSerieLine.FindFirst();
                 end;
 
             }
@@ -338,7 +350,11 @@ xmlport 50100 "EI-ExportInvoice"
                     {
                         trigger OnBeforePassVariable()
                         begin
-                            //Datos de las tablas de excel
+                            Clear(DianSetup);
+                            DianSetup.setrange("Table Code", '108');
+                            DianSetup.setrange("DIAN Code", PostCodeCompanyInfo."Department Code DANE");
+                            if DianSetup.FindFirst() then
+                                DFE_6 := DianSetup.Description;
                         end;
                     }
 
@@ -451,7 +467,7 @@ xmlport 50100 "EI-ExportInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ADQ_7 := enc."Sell-to Customer Name";
+                        ADQ_7 := ENC."Sell-to Customer Name";
                     end;
                 }
 
@@ -461,8 +477,8 @@ xmlport 50100 "EI-ExportInvoice"
 
                     trigger OnBeforePassVariable()
                     begin
-                        //if Customer."Partner Type" = Customer."Partner Type"::Person then
-                        //    ADQ_8 := Customer.Name + 
+                        if Customer."Partner Type" = Customer."Partner Type"::Person then
+                            ADQ_8 := Customer.Name + customer."Last Name" + Customer."Mothers Last Name";
                     end;
                 }
 
@@ -484,7 +500,14 @@ xmlport 50100 "EI-ExportInvoice"
 
                 textelement(ADQ_13)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        Clear(DianSetup);
+                        DianSetup.SetRange("Table Code", '9997');
+                        DianSetup.SetRange("DIAN Code", PostCodeCustomer."Municipality Code DANE");
+                        if DianSetup.FindFirst() then
+                            ADQ_13 := DianSetup.Description;
+                    end;
                 }
 
                 textelement(ADQ_14)
@@ -519,7 +542,7 @@ xmlport 50100 "EI-ExportInvoice"
                     {
                         trigger OnBeforePassVariable()
                         begin
-                            //TCR_1 := Customer."Taxayer Obligations";
+                            TCR_1 := Customer."Fiscal Responsabilities";
                         end;
                     }
                 }
@@ -580,12 +603,18 @@ xmlport 50100 "EI-ExportInvoice"
 
                     textelement(DFA_3)
                     {
-
+                        trigger OnBeforePassVariable()
+                        begin
+                            DFA_3 := Customer."Post Code";
+                        end;
                     }
 
                     textelement(DFA_4)
                     {
-
+                        trigger OnBeforePassVariable()
+                        begin
+                            DFA_4 := PostCodeCustomer."Municipality Code DANE";
+                        end;
                     }
                 }
 
@@ -613,32 +642,50 @@ xmlport 50100 "EI-ExportInvoice"
             {
                 textelement(TOT_1)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        TOT_1 := format(TotalAmountExclVAT(ENC."No."));
+                    end;
                 }
 
                 textelement(TOT_2)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        TOT_2 := Currency."Coin ISO 4217";
+                    end;
                 }
 
                 textelement(TOT_3)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        TOT_3 := format(TotalBaseVAT(ENC."No."));
+                    end;
                 }
 
                 textelement(TOT_4)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        TOT_4 := Currency."Coin ISO 4217";
+                    end;
                 }
 
                 textelement(TOT_5)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        TOT_5 := format(TotalAmountInclVAT(ENC."No."));
+                    end;
                 }
 
                 textelement(TOT_6)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        TOT_6 := Currency."Coin ISO 4217";
+                    end;
                 }
 
                 textelement(TOT_7)
@@ -648,37 +695,55 @@ xmlport 50100 "EI-ExportInvoice"
 
                 textelement(TOT_8)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        TOT_8 := Currency."Coin ISO 4217";
+                    end;
                 }
 
                 textelement(TOT_9)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        TOT_9 := format(TotalDiscountAmount(ENC."No."));
+                    end;
                 }
 
                 textelement(TOT_10)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        TOT_10 := Currency."Coin ISO 4217";
+                    end;
                 }
             }
 
-            textelement(TIM)
+            tableelement(TIM; "VAT Entry")
             {
                 textelement(TIM_1)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        if TIM."VAT DIAN Code" in ['01', '02', '03', '04'] then
+                            TIM_1 := 'false'
+                        else
+                            TIM_1 := 'TRUE';
+                    end;
                 }
 
                 textelement(TIM_2)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        TIM_2 := format(TIM.Amount);
+                    end;
                 }
 
                 textelement(TIM_3)
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        tim_3 := enc."Currency Code";
+                        TIM_3 := ENC."Currency Code";
                     end;
                 }
 
@@ -686,66 +751,107 @@ xmlport 50100 "EI-ExportInvoice"
                 {
                     textelement(IMP_1)
                     {
-
+                        trigger OnBeforePassVariable()
+                        begin
+                            IMP_1 := TIM."VAT DIAN Code";
+                        end;
                     }
 
                     textelement(IMP_2)
                     {
-
+                        trigger OnBeforePassVariable()
+                        begin
+                            IMP_2 := format(TIM.Base);
+                        end;
                     }
 
                     textelement(IMP_3)
                     {
-
+                        trigger OnBeforePassVariable()
+                        begin
+                            IMP_3 := ENC."Currency Code";
+                        end;
                     }
 
                     textelement(IMP_4)
                     {
-
+                        trigger OnBeforePassVariable()
+                        begin
+                            IMP_4 := format(TIM.Amount);
+                        end;
                     }
 
                     textelement(IMP_5)
                     {
-
+                        trigger OnBeforePassVariable()
+                        begin
+                            IMP_5 := ENC."Currency Code";
+                        end;
                     }
 
                     textelement(IMP_6)
                     {
-
+                        trigger OnBeforePassVariable()
+                        begin
+                            IMP_6 := format(TIM."Tax Above Maximum COL");
+                        end;
                     }
                 }
+
+                trigger OnPreXmlItem()
+                begin
+                    TIM.SetRange("Document No.", ENC."No.");
+                end;
             }
 
             textelement(DRF)
             {
                 textelement(DRF_1)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        DRF_1 := NoSerieLine."Resolution No.";
+                    end;
                 }
 
                 textelement(DRF_2)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        DRF_2 := format(NoSerieLine."Starting Date");
+                    end;
                 }
 
                 textelement(DRF_3)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        DRF_3 := format(NoSerieLine."Resolution Ending Date");
+                    end;
                 }
 
                 textelement(DRF_4)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        DRF_4 := CopyStr(ENC."No. Series", 1, 2);
+                    end;
                 }
 
                 textelement(DRF_5)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        DRF_5 := NoSerieLine."Starting No.";
+                    end;
                 }
 
                 textelement(DRF_6)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        DRF_6 := CopyStr(NoSerieLine."Starting No.", 3);
+                    end;
                 }
             }
 
@@ -753,7 +859,10 @@ xmlport 50100 "EI-ExportInvoice"
             {
                 textelement(PCR_1)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        PCR_1 := EISetup."Taxpayer Obligation";
+                    end;
                 }
             }
 
@@ -761,76 +870,219 @@ xmlport 50100 "EI-ExportInvoice"
             {
                 textelement(AQF_1)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        AQF_1 := DelChr(Customer."VAT Registration No.", '=', ' .-');
+                    end;
                 }
 
                 textelement(AQF_2)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        AQF_2 := Customer."Document Type";
+                    end;
                 }
 
                 textelement(AQF_3)
                 {
-
+                    trigger OnBeforePassVariable()
+                    var
+                        taxArea: Record "Tax Area";
+                    begin
+                        Clear(taxArea);
+                        taxArea.Get(ENC."Tax Area Code");
+                        if taxArea."Regime Type" = taxArea."Regime Type"::"Simplified Regime" then
+                            AQF_3 := '0'
+                        else
+                            AQF_3 := '2';
+                    end;
                 }
 
                 textelement(AQF_4)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        AQF_4 := customer.Name;
+                    end;
                 }
 
-                textelement(AQF_5)
+                textelement(AQF_13)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        AQF_13 := Customer."Country/Region Code";
+                    end;
                 }
 
                 textelement(ATA)
                 {
                     textelement(ATA_1)
                     {
-
+                        trigger OnBeforePassVariable()
+                        begin
+                            ATA_1 := Customer."Fiscal Responsabilities";
+                        end;
                     }
                 }
             }
 
-            textelement("NOT")
+            tableelement("NOT"; Integer)
             {
                 textelement(NOT_1)
                 {
+                    trigger OnBeforePassVariable()
+                    var
+                        varInStream: InStream;
+                        reportCheque: Report Check;
+                        textAmount: array[2] of Text[80];
+                    begin
+                        case "NOT".number of
+                            1:
+                                begin
+                                    NOT_1 := ADQ_2 + '-' + ADQ_22;
+                                end;
 
+                            2:
+                                begin
+                                    NOT_1 := ENC."Location Code";
+                                end;
+
+                            3:
+                                begin
+                                    NOT_1 := CompanyInfo.City;
+                                end;
+
+                            4:
+                                begin
+                                    if MEP_2 = '1' then
+                                        NOT_1 := 'X'
+                                    else
+                                        NOT_1 := '';
+                                end;
+
+                            5:
+                                begin
+                                    if MEP_2 = '2' then
+                                        NOT_1 := 'X'
+                                    else
+                                        NOT_1 := '';
+                                end;
+
+                            6:
+                                begin
+                                    NOT_1 := ENC."Payment Terms Code";
+                                end;
+
+                            7:
+                                begin
+                                    ENC.calcfields("Work Description");
+                                    ENC."Work Description".CreateInStream(varInStream);
+                                    varInStream.ReadText(NOT_1);
+                                end;
+
+                            8:
+                                begin
+                                    reportCheque.FormatNoText(textAmount, ENC."Amount Including VAT", ENC."Currency Code");
+                                    NOT_1 := textAmount[1] + textAmount[2];
+                                end;
+
+                            9:
+                                begin
+                                    NOT_1 := EISetup.TEXT1;
+                                end;
+
+                            10:
+                                begin
+                                    NOT_1 := EISetup.TEXT2;
+                                end;
+
+                            11:
+                                begin
+                                    NOT_1 := EISetup.TEXT3;
+                                end;
+
+                            12:
+                                begin
+                                    NOT_1 := EISetup.TEXT4;
+                                end;
+
+                            13:
+                                begin
+                                    NOT_1 := ENC."Ship-to Code";
+                                end;
+
+                            14:
+                                begin
+                                    NOT_1 := ENC."Ship-to Name";
+                                end;
+
+                            15:
+                                begin
+                                    NOT_1 := EISetup.TEXT5;
+                                end;
+
+                            16:
+                                begin
+                                    NOT_1 := CompanyInfo."Phone No.";
+                                end;
+                        end;
+                    end;
                 }
+
+                trigger OnPreXmlItem()
+                begin
+                    "NOT".SetRange(Number, 1, 16);
+                end;
             }
 
             textelement(IEN)
             {
                 textelement(IEN_1)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        IEN_1 := ENC."Ship-to Address";
+                    end;
                 }
 
                 textelement(IEN_2)
                 {
-
-                }
-
-                textelement(IEN_3)
-                {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        IEN_2 := PostCodeShipTo."Department Code DANE";
+                    end;
                 }
 
                 textelement(IEN_4)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        IEN_4 := PostCodeShipTo."Municipality Code DANE";
+                    end;
                 }
 
                 textelement(IEN_5)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        IEN_5 := ENC."Ship-to Post Code";
+                    end;
                 }
 
                 textelement(IEN_6)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        IEN_6 := ENC."Ship-to Country/Region Code";
+                    end;
+                }
+                textelement(IEN_12)
+                {
+                    trigger OnBeforePassVariable()
+                    begin
+                        IEN_12 := PostCodeShipTo."Municipality Code DANE";
+                    end;
                 }
             }
 
@@ -838,17 +1090,29 @@ xmlport 50100 "EI-ExportInvoice"
             {
                 textelement(MEP_1)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        MEP_1 := PaymentMethod."Payment Means";
+                    end;
                 }
 
                 textelement(MEP_2)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        if PaymentMethod.Credit then
+                            MEP_2 := '2'
+                        else
+                            MEP_2 := '1';
+                    end;
                 }
 
                 textelement(MEP_3)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        MEP_3 := format(ENC."Due Date", 0, '<Year4><Month,2><Day,2>');
+                    end;
                 }
             }
 
@@ -859,119 +1123,151 @@ xmlport 50100 "EI-ExportInvoice"
 
                 textelement(ITE_1)
                 {
-
-                }
-
-                textelement(ITE_2)
-                {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        ITE_1 := format(ITE."Line No.");
+                    end;
                 }
 
                 textelement(ITE_3)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        ITE_3 := Format(ITE.Quantity);
+                    end;
                 }
 
                 textelement(ITE_4)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        ITE_4 := UnitOfMeausre."DIAN Code";
+                    end;
                 }
 
                 textelement(ITE_5)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        ITE_5 := format(ITE.GetLineAmountExclVAT());
+                    end;
                 }
 
                 textelement(ITE_6)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        ITE_6 := ENC."Currency Code";
+                    end;
                 }
 
                 textelement(ITE_7)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        ITE_7 := format(ITE."Unit Price");
+                    end;
                 }
 
                 textelement(ITE_8)
                 {
-
-                }
-
-                textelement(ITE_9)
-                {
-
-                }
-
-                textelement(ITE_10)
-                {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        ITE_8 := ENC."Currency Code";
+                    end;
                 }
 
                 textelement(ITE_11)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        ITE_11 := ITE.Description + ' ' + ITE."Description 2";
+                    end;
                 }
 
-                textelement(ITE_12)
+                textelement(ITE_18)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        ITE_18 := ITE."Bill-to Customer No.";
+                    end;
                 }
 
-                textelement(ITE_13)
+                textelement(ITE_19)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        ITE_19 := Format(ITE.Amount);
+                    end;
                 }
 
-                textelement(ITE_14)
+                textelement(ITE_20)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        ITE_20 := ENC."Currency Code";
+                    end;
                 }
 
-                textelement(ITE_15)
+                textelement(ITE_21)
                 {
+                    trigger OnBeforePassVariable()
+                    begin
+                        ITE_21 := Format(ITE."Amount Including VAT");
+                    end;
+                }
 
+                textelement(ITE_22)
+                {
+                    trigger OnBeforePassVariable()
+                    begin
+                        ITE_22 := ENC."Currency Code";
+                    end;
+                }
+
+                textelement(ITE_27)
+                {
+                    trigger OnBeforePassVariable()
+                    begin
+                        ITE_27 := Format(ITE.Quantity);
+                    end;
+                }
+
+                textelement(ITE_28)
+                {
+                    trigger OnBeforePassVariable()
+                    begin
+                        ITE_28 := UnitOfMeausre."DIAN Code";
+                    end;
                 }
 
                 textelement(IAE)
                 {
                     textelement(IAE_1)
                     {
-
+                        trigger OnBeforePassVariable()
+                        begin
+                            IAE_1 := Item.GTIN;
+                        end;
                     }
 
                     textelement(IAE_2)
                     {
-
+                        trigger OnBeforePassVariable()
+                        begin
+                            IAE_2 := EISetup."Product Standard";
+                        end;
                     }
                 }
-            }
-        }
-    }
 
-    requestpage
-    {
-        layout
-        {
-            area(content)
-            {
-                group(GroupName)
-                {
-                    /*ield(Name; SourceExpression)
-                    {
+                trigger OnAfterGetRecord()
+                begin
+                    clear(UnitOfMeausre);
+                    UnitOfMeausre.Get(ITE."Unit of Measure Code");
 
-                    }*/
-                }
-            }
-        }
-
-        actions
-        {
-            area(processing)
-            {
-                action(ActionName)
-                {
-
-                }
+                    Clear(Item);
+                    Item.Get(ITE."No.");
+                end;
             }
         }
     }
@@ -983,13 +1279,15 @@ xmlport 50100 "EI-ExportInvoice"
         Currency: Record Currency;
         PostCodeCompanyInfo: Record "Post Code";
         PostCodeCustomer: Record "Post Code";
+        PostCodeShipTo: Record "Post Code";
         CountryRegionCompanyInfo: Record "Country/Region";
         CountryRegionCustomer: Record "Country/Region";
-        TaxJurisdictions: Record "Tax Jurisdiction";
-        TaxDetail: Record "Tax Detail";
         PaymentMethod: Record "Payment Method";
         UnitOfMeausre: Record "Unit of Measure";
         Item: Record Item;
+        DianSetup: Record "DIAN Setup";
+        NoSerieLine: Record "No. Series Line";
+
 
 
     trigger OnPreXmlPort()
@@ -998,7 +1296,7 @@ xmlport 50100 "EI-ExportInvoice"
         CompanyInfo.get;
 
         Clear(PostCodeCompanyInfo);
-        PostCodeCompanyInfo.get(CompanyInfo."Post Code");
+        PostCodeCompanyInfo.get(CompanyInfo."Post Code", CompanyInfo.City);
 
         Clear(CountryRegionCompanyInfo);
         CountryRegionCompanyInfo.get(CompanyInfo."Country/Region Code");
@@ -1011,8 +1309,75 @@ xmlport 50100 "EI-ExportInvoice"
     var
         invoiceLines: Record "Sales Invoice Line";
     begin
+        rtNoOfLines := 0;
+
         Clear(invoiceLines);
         invoiceLines.SetRange("Document No.", pDocNo);
+        invoiceLines.SetFilter(Quantity, '<>%1', 0);
         rtNoOfLines := invoiceLines.Count;
+    end;
+
+    local procedure TotalAmountExclVAT(pDocNo: Code[20]) rtAmountExclVAT: Decimal;
+    var
+        invoiceLines: Record "Sales Invoice Line";
+        amountExclVAT: Decimal;
+    begin
+        rtAmountExclVAT := 0;
+
+        Clear(invoiceLines);
+        invoiceLines.SetRange("Document No.", pDocNo);
+        invoiceLines.SetFilter(Quantity, '<>%1', 0);
+        if invoiceLines.FindSet then begin
+            amountExclVAT += invoiceLines.GetLineAmountExclVAT();
+        end;
+        rtAmountExclVAT := amountExclVAT;
+    end;
+
+    local procedure TotalBaseVAT(pDocNo: Code[20]) rtBaseVAT: Decimal;
+    var
+        invoiceLines: Record "Sales Invoice Line";
+        baseVAT: Decimal;
+    begin
+        rtBaseVAT := 0;
+
+        Clear(invoiceLines);
+        invoiceLines.SetRange("Document No.", pDocNo);
+        invoiceLines.SetFilter(Quantity, '<>%1', 0);
+        if invoiceLines.FindSet then begin
+            baseVAT += invoiceLines."VAT Base Amount";
+        end;
+        rtBaseVAT := baseVAT;
+    end;
+
+    local procedure TotalAmountInclVAT(pDocNo: Code[20]) rtAmountInclVAT: Decimal;
+    var
+        invoiceLines: Record "Sales Invoice Line";
+        amountInclVAT: Decimal;
+    begin
+        rtAmountInclVAT := 0;
+
+        Clear(invoiceLines);
+        invoiceLines.SetRange("Document No.", pDocNo);
+        invoiceLines.SetFilter(Quantity, '<>%1', 0);
+        if invoiceLines.FindSet then begin
+            amountInclVAT += invoiceLines."Amount Including VAT";
+        end;
+        rtAmountInclVAT := amountInclVAT;
+    end;
+
+    local procedure TotalDiscountAmount(pDocNo: Code[20]) rtDiscountAmount: Decimal;
+    var
+        invoiceLines: Record "Sales Invoice Line";
+        discountAmount: Decimal;
+    begin
+        rtDiscountAmount := 0;
+
+        Clear(invoiceLines);
+        invoiceLines.SetRange("Document No.", pDocNo);
+        invoiceLines.SetFilter(Quantity, '<>%1', 0);
+        if invoiceLines.FindSet then begin
+            discountAmount += invoiceLines."Line Discount Amount";
+        end;
+        rtDiscountAmount := discountAmount;
     end;
 }

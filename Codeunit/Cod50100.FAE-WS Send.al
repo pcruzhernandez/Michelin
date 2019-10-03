@@ -107,6 +107,7 @@ codeunit 50100 "FAE-WS Send"
         CI17: TextConst ENU = 'The field "Business Registration No." is empty in Company Information.', ESP = 'El campo "N§ Matr¡cula Mercantil" est  vac¡o en Informaci¢n de empresa.';
         CI18: TextConst ENU = 'The field "Electronic Invoice URLEndpoint" is empty in EI_Setup.', ESP = 'El campo "Endpoint URL Facturaci¢n Electr¢nica" est  vac¡o en EI_Setup.';
         CI19: TextConst ENU = 'The field "Electronic Invoice Web Response" is empty in Company Information.', ESP = 'El campo "Web Respuesta Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
+        CI20: TextConst ENU = 'The field "Electronic Invoice Web Response" is empty in Company Information.', ESP = 'El campo "Web Respuesta Facturaci¢n Electr¢nica" est  vac¡o en Informaci¢n de empresa.';
         CO01: TextConst ENU = '"The field ""DIAN Code"" is empty in VAT Registration Type "', ESP = '"El campo ""C¢digo DIAN"" est  vac¡o en el tipo de registro de IVA "';
         CO02: TextConst ENU = '"The field ""DIAN Table 20"" has no selected option in VAT Registration Type "', ESP = '"El campo ""DIAN Table 20"" no tiene opci¢n seleccionada en el tipo de registro de IVA "';
         CU01: TextConst ENU = 'The field VAT Registration No. is empty in Customer.', ESP = 'El campo CIF/NIF est  vac¡o en Cliente.';
@@ -144,7 +145,10 @@ codeunit 50100 "FAE-WS Send"
         SE11: TextConst ENU = '"The field ""EIConcept"" is empty in Sales Invoice"', ESP = '"The field ""EIConcept"" is empty in Factura de venta "';
         IT01: TextConst ENU = '"The field ""DIAN Code"" is empty in Unit of Measure"', ESP = '"El campo ""C¢digo DIAN"" est  vac¡o en Unidad de medida "';
         PM01: TextConst ENU = '"The field ""Payment Means"" is empty in Payment Method"', ESP = '"El campo ""Payment Means"" est  vac¡o en Unidad de medida "';
-
+        PM02: TextConst ENU = 'The field Tax Area Code is empty in Sales Header', ESP = 'El campo Tax Area Code esta vacío en Cabecera Venta ';
+        PM03: TextConst ENU = 'The field Ship-to Post Code is empty in Sales Header', ESP = 'El campo Envio Codigo Posta esta vacío en Cabecera Venta ';
+        PM04: TextConst ENU = 'The field Bill-to Post Code is empty in Sales Header', ESP = 'El campo Factura a Codigo Postal esta vacío en Cabecera Venta ';
+        PM05: TextConst ENU = 'The field Currency Code is empty in Sales Header', ESP = 'El campo Divisa esta vacío en Cabecera Venta ';
         Canceled: TextConst ENU = 'Canceled by user.', ESP = 'Cancelado por el usuario.';
         NoSeriesManagement: Codeunit 396;
         PaymentMethod: Record "Payment Method";
@@ -176,6 +180,9 @@ codeunit 50100 "FAE-WS Send"
         IF CompanyInfo."Country/Region Code" = '' THEN
             ERROR(CI06);
 
+        if CompanyInfo."Post Code" = '' then
+            Error(CI20);
+
         IF EI_Setup."Electronic Invoice Company ID" = '' THEN
             ERROR(CI13);
 
@@ -194,9 +201,6 @@ codeunit 50100 "FAE-WS Send"
 
 
 
-
-
-
         if SalesHeader.GET(SalesHeader."Document Type"::Invoice, p_NoDocument) then begin
             // Comprobaciones en Cliente
             Customer.GET(SalesHeader."Bill-to Customer No.");
@@ -205,6 +209,19 @@ codeunit 50100 "FAE-WS Send"
                 Customer.GET(SalesHeader."Bill-to Customer No.");
             end;
         end;
+
+        if SalesHeader."Tax Area Code" = '' then
+            ERROR(PM02);
+        if SalesHeader."Ship-to Post Code" = '' then
+            ERROR(PM03);
+        if SalesHeader."Bill-to Post Code" = '' then
+            ERROR(PM04);
+
+        if SalesHeader."Currency Code" = '' then
+            ERROR(PM05);
+
+
+
 
 
 
@@ -253,19 +270,24 @@ codeunit 50100 "FAE-WS Send"
 
         if SalesHeader."Doc. Type DIAN" = '' then
             error(SE05);
-        if SalesHeader."Shiptment Port" = '' then
-            error(SE06);
-        if SalesHeader."Destination Port" = '' then
-            error(SE07);
-        if SalesHeader."Gross Weight" = '' then
-            error(SE08);
-        if SalesHeader."Shipping Information" = '' then
-            error(SE09);
-        if SalesHeader."Net Weight" = '' then
-            error(SE10);
+
+
+        if salesheader."Doc. Type DIAN" = '02' then begin
+            if SalesHeader."Shiptment Port" = '' then
+                error(SE06);
+            if SalesHeader."Destination Port" = '' then
+                error(SE07);
+            if SalesHeader."Gross Weight" = '' then
+                error(SE08);
+            if SalesHeader."Shipping Information" = '' then
+                error(SE09);
+            if SalesHeader."Net Weight" = '' then
+                error(SE10);
+        end;
         if (SalesHeader."Doc. Type DIAN" = '91') or (SalesHeader."Doc. Type DIAN" = '92') then
             if SalesHeader."EIConcept" = '' then
                 error(SE11);
+
         //Control Paymenth Method
         PaymentMethod.GET(SalesHeader."Payment Method Code");
         if PaymentMethod."Payment Means" = '' then
@@ -360,10 +382,10 @@ codeunit 50100 "FAE-WS Send"
         IF IsVar.ISRECORD() THEN BEGIN
             Record.GETTABLE(IsVar);
             EISetup.GET();
-            EISetup.TESTFIELD("Electronic Invoice Path");
-            FilePath := EISetup."Electronic Invoice Path";
-            IF COPYSTR(FilePath, STRLEN(FilePath) - 1, 1) <> '\' THEN
-                FilePath += '\';
+            //EISetup.TESTFIELD("Electronic Invoice Path");
+            // FilePath := EISetup."Electronic Invoice Path";
+            // IF COPYSTR(FilePath, STRLEN(FilePath) - 1, 1) <> '\' THEN
+            //     FilePath += '\';
             Field := Record.FIELD(3);
 
             //Assing XML Name

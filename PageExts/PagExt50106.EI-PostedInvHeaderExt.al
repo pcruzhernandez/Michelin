@@ -107,6 +107,21 @@ pageextension 50106 "IE-PostedInvHeaderExt" extends "Posted Sales Invoice"
                         cu.SendMethod(l_opWebServices::DownloadDocuments, '', FileInStream, l_dnetArray, "No.", l_documents, 112, 0);
                     end;
                 }
+                Action("Create XML")
+                {
+                    ApplicationArea = All;
+                    Caption = 'Create XML';
+                    Image = ValidateEmailLoggingSetup;
+                    trigger OnAction();
+                    var
+                        var_Xml: XmlPort 50100;
+                        var_PostedInvoice: record "Sales Invoice Header";
+                    begin
+                        CurrPage.SetSelectionFilter(var_PostedInvoice);
+                        var_Xml.SetTableView(var_PostedInvoice);
+                        var_Xml.Run();
+                    end;
+                }
             }
         }
     }
