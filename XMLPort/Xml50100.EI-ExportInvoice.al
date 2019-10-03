@@ -2,16 +2,16 @@ xmlport 50100 "EI-ExportInvoice"
 {
     Format = Xml;
     Direction = Export;
+    Encoding = UTF8;
     schema
     {
-        textelement(Factura)
+
+        textelement(FACTURA)
         {
             tableelement(ENC; "Sales Invoice Header")
             {
                 textelement(ENC_1)
                 {
-                    XmlName = 'ENC';
-
                     trigger OnBeforePassVariable()
                     begin
                         if ENC."Doc. Type DIAN" in ['01', '02', '03', '04'] then
@@ -69,7 +69,7 @@ xmlport 50100 "EI-ExportInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ENC_7 := format(ENC."Posting Date", 0, '<Year4><Month,2><Day,2>');
+                        ENC_7 := format(ENC."Posting Date", 0, '<Year4>-<Month,2>-<Day,2>');
                     end;
                 }
 
@@ -109,7 +109,7 @@ xmlport 50100 "EI-ExportInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ENC_16 := format(ENC."Due Date", 0, '<Year4><Month,2><Day,2>');
+                        ENC_16 := format(ENC."Due Date", 0, '<Year4>-<Month,2>-<Day,2>');
                     end;
                 }
 
@@ -644,7 +644,7 @@ xmlport 50100 "EI-ExportInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        TOT_1 := format(TotalAmountExclVAT(ENC."No."));
+                        TOT_1 := delchr(format(TotalAmountExclVAT(ENC."No.")), '=', '.');
                     end;
                 }
 
@@ -660,7 +660,7 @@ xmlport 50100 "EI-ExportInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        TOT_3 := format(TotalBaseVAT(ENC."No."));
+                        TOT_3 := delchr(format(TotalBaseVAT(ENC."No.")), '=', '.');
                     end;
                 }
 
@@ -676,7 +676,7 @@ xmlport 50100 "EI-ExportInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        TOT_5 := format(TotalAmountInclVAT(ENC."No."));
+                        TOT_5 := delchr(format(TotalAmountInclVAT(ENC."No.")), '=', '.');
                     end;
                 }
 
@@ -705,7 +705,7 @@ xmlport 50100 "EI-ExportInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        TOT_9 := format(TotalDiscountAmount(ENC."No."));
+                        TOT_9 := delchr(format(TotalDiscountAmount(ENC."No.")), '=', '.');
                     end;
                 }
 
@@ -735,7 +735,7 @@ xmlport 50100 "EI-ExportInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        TIM_2 := format(TIM.Amount);
+                        TIM_2 := delchr(format(TIM.Amount), '=', '.');
                     end;
                 }
 
@@ -761,7 +761,7 @@ xmlport 50100 "EI-ExportInvoice"
                     {
                         trigger OnBeforePassVariable()
                         begin
-                            IMP_2 := format(TIM.Base);
+                            IMP_2 := delchr(format(TIM.Base), '=', '.');
                         end;
                     }
 
@@ -777,7 +777,7 @@ xmlport 50100 "EI-ExportInvoice"
                     {
                         trigger OnBeforePassVariable()
                         begin
-                            IMP_4 := format(TIM.Amount);
+                            IMP_4 := delchr(format(TIM.Amount), '=', '.');
                         end;
                     }
 
@@ -793,7 +793,7 @@ xmlport 50100 "EI-ExportInvoice"
                     {
                         trigger OnBeforePassVariable()
                         begin
-                            IMP_6 := format(TIM."Tax Above Maximum COL");
+                            IMP_6 := delchr(format(TIM."Tax Above Maximum COL"), '=', '.');
                         end;
                     }
                 }
@@ -983,8 +983,10 @@ xmlport 50100 "EI-ExportInvoice"
 
                             8:
                                 begin
-                                    reportCheque.FormatNoText(textAmount, ENC."Amount Including VAT", ENC."Currency Code");
-                                    NOT_1 := textAmount[1] + textAmount[2];
+                                    ENC.CalcFields("Amount Including VAT");
+                                    reportCheque.InitTextVariable();
+                                    reportCheque.FormatNoText(textAmount, TotalAmountInclVAT(ENC."No."), ENC."Currency Code");
+                                    NOT_1 := DelChr(textAmount[1] + textAmount[2], '=', '*');
                                 end;
 
                             9:
@@ -1149,7 +1151,7 @@ xmlport 50100 "EI-ExportInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ITE_5 := format(ITE.GetLineAmountExclVAT());
+                        ITE_5 := delchr(format(ITE.GetLineAmountExclVAT()), '=', '.');
                     end;
                 }
 
@@ -1165,7 +1167,7 @@ xmlport 50100 "EI-ExportInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ITE_7 := format(ITE."Unit Price");
+                        ITE_7 := delchr(format(ITE."Unit Price"), '=', '.');
                     end;
                 }
 
@@ -1197,7 +1199,7 @@ xmlport 50100 "EI-ExportInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ITE_19 := Format(ITE.Amount);
+                        ITE_19 := delchr(Format(ITE.Amount), '=', '.');
                     end;
                 }
 
@@ -1213,7 +1215,7 @@ xmlport 50100 "EI-ExportInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ITE_21 := Format(ITE."Amount Including VAT");
+                        ITE_21 := delchr(Format(ITE."Amount Including VAT"), '=', '.');
                     end;
                 }
 

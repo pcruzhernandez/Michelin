@@ -116,6 +116,8 @@ pageextension 50106 "IE-PostedInvHeaderExt" extends "Posted Sales Invoice"
                     var
                         var_Xml: XmlPort 50100;
                         var_PostedInvoice: record "Sales Invoice Header";
+                        var_cheque: report 1401;
+                        var_array: array[2] of Text[80];
                     begin
                         CurrPage.SetSelectionFilter(var_PostedInvoice);
                         var_Xml.SetTableView(var_PostedInvoice);
