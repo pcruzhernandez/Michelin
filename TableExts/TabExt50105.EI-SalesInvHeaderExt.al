@@ -28,6 +28,7 @@ tableextension 50105 "EI-SalesInvHeaderExt" extends "Sales Invoice Header"
             OptionMembers = " ",Accepted,Rejected,"In process",Fail;
             DataClassification = ToBeClassified;
 
+
         }
         field(50109; "Elec. Invoice Stat. Error"; Text[250])
         {
