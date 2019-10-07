@@ -125,6 +125,26 @@ table 50100 "EI-Setup"
             DataClassification = ToBeClassified;
 
         }
+
+        field(26; TEXT6; Text[250])
+        {
+
+        }
+
+        field(27; TEXT7; Text[250])
+        {
+
+        }
+
+        field(28; "Export Expense 3"; Text[50])
+        {
+
+        }
+
+        field(29; "Export Expense 4"; Text[50])
+        {
+
+        }
     }
 
     keys

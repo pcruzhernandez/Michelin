@@ -840,7 +840,7 @@ xmlport 50101 "EI-ExportExportationInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        DRF_2 := format(NoSerieLine."Starting Date", 0, '<Year4>-<Month,2>-<Day,2>'); 
+                        DRF_2 := format(NoSerieLine."Starting Date");
                     end;
                 }
 
@@ -848,7 +848,7 @@ xmlport 50101 "EI-ExportExportationInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        DRF_3 := format(NoSerieLine."Resolution Ending Date", 0, '<Year4>-<Month,2>-<Day,2>'); 
+                        DRF_3 := format(NoSerieLine."Resolution Ending Date");
                     end;
                 }
 
@@ -1027,12 +1027,12 @@ xmlport 50101 "EI-ExportExportationInvoice"
 
                             14:
                                 begin
-                                    //NOT_1 := EISetup.EX;
+                                    NOT_1 := EISetup."Export Expense 3";
                                 end;
 
                             15:
                                 begin
-                                    NOT_1 := EISetup.TEXT5;
+                                    NOT_1 := EISetup."Export Expense 4";
                                 end;
 
                             16:
@@ -1080,12 +1080,12 @@ xmlport 50101 "EI-ExportExportationInvoice"
 
                             24:
                                 begin
-                                    //NOT_1 := EISetup.TE;
+                                    NOT_1 := EISetup.TEXT6;
                                 end;
 
                             25:
                                 begin
-                                    NOT_1 := CompanyInfo."Phone No.";
+                                    NOT_1 := EISetup.TEXT7;
                                 end;
 
                             26:
@@ -1190,7 +1190,7 @@ xmlport 50101 "EI-ExportExportationInvoice"
             tableelement("ITE"; "Sales Invoice Line")
             {
                 LinkTable = ENC;
-                LinkFields = "Document No." = field ("No.");
+                LinkFields = "Document No." = field("No.");
 
                 textelement(ITE_1)
                 {

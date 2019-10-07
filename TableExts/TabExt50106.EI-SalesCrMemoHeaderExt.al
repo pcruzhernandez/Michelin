@@ -26,7 +26,7 @@ tableextension 50106 "EI-SalesCrMemoHeaderExt" extends "Sales Cr.Memo Header"
         {
             OptionCaption = ' ,Accepted,Rejected,In process,Fail';
             OptionMembers = " ",Accepted,Rejected,"In process",Fail;
-
+            DataClassification = ToBeClassified;
         }
 
         field(50109; "Elec. Invoice Stat. Error"; Text[50])

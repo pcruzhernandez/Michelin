@@ -1,4 +1,4 @@
-codeunit 50102 "FAE-Subscriber"
+codeunit 50102 "EI-WS Subscriber"
 {
     EventSubscriberInstance = StaticAutomatic;
 

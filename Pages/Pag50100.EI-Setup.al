@@ -52,6 +52,16 @@ page 50100 "EI-Setup"
                     ApplicationArea = All;
                 }
 
+                field(TEXT6; TEXT6)
+                {
+                    ApplicationArea = All;
+                }
+
+                field(TEXT7; TEXT7)
+                {
+                    ApplicationArea = All;
+                }
+
                 field("UBL Version"; "UBL Version")
                 {
                     ApplicationArea = All;
@@ -81,9 +91,17 @@ page 50100 "EI-Setup"
                 {
                     ApplicationArea = All;
                 }
-            }
-            group("Web Services")
-            {
+
+                field("Export Expense 3"; "Export Expense 3")
+                {
+                    ApplicationArea = All;
+                }
+
+                field("Export Expense 4"; "Export Expense 4")
+                {
+                    ApplicationArea = All;
+                }
+
                 field("Electronic Invoice Company ID"; "Electronic Invoice Company ID")
                 {
 
@@ -102,18 +120,6 @@ page 50100 "EI-Setup"
                 }
 
                 field("Electronic Invoice Endpoint"; "Electronic Invoice Endpoint")
-                {
-
-                }
-                field("Use Proxy"; "Use Proxy")
-                {
-
-                }
-                field(Proxy; Proxy)
-                {
-
-                }
-                field(Port; Port)
                 {
 
                 }
