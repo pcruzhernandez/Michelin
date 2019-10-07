@@ -1,6 +1,6 @@
 page 50104 "EI-Incoterms"
 {
-    PageType = Card;
+    PageType = List;
     ApplicationArea = All;
     UsageCategory = Administration;
     SourceTable = "EI-Incoterms";
@@ -9,7 +9,7 @@ page 50104 "EI-Incoterms"
     {
         area(Content)
         {
-            group(GroupName)
+            repeater(General)
             {
                 field("Inco Code"; "Inco Code")
                 {

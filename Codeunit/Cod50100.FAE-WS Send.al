@@ -400,25 +400,35 @@ codeunit 50100 "FAE-WS Send"
             CASE Record.NUMBER OF
                 DATABASE::"Sales Invoice Header":
                     BEGIN
+                        // Factura NAC
                         SalesInvoiceHeader.SETFILTER("No.", FORMAT(Field.VALUE));
-                        SalesInvoiceHeader.SETRANGE(SalesInvoiceHeader."Doc. Type DIAN", '91');
+                        SalesInvoiceHeader.SETRANGE(SalesInvoiceHeader."Doc. Type DIAN", '01');
                         IF SalesInvoiceHeader.FINDFIRST THEN
-                            XMLPORT.EXPORT(XMLPORT::"EI-ExportInvoice", FileOutStream, SalesInvoiceHeader);
-
+                            XMLPORT.EXPORT(XMLPORT::"EI-ExportLocalInvoice", FileOutStream, SalesInvoiceHeader);
+                        //Factura EXP
+                        SalesInvoiceHeader.SETFILTER("No.", FORMAT(Field.VALUE));
+                        SalesInvoiceHeader.SETRANGE(SalesInvoiceHeader."Doc. Type DIAN", '02');
+                        IF SalesInvoiceHeader.FINDFIRST THEN
+                            XMLPORT.EXPORT(XMLPORT::"EI-ExportExportationInvoice", FileOutStream, SalesInvoiceHeader);
+                        //NOTA DEBITO
                         SalesInvoiceHeader.SETFILTER("No.", FORMAT(Field.VALUE));
                         SalesInvoiceHeader.SETRANGE(SalesInvoiceHeader."Doc. Type DIAN", '92');
                         IF SalesInvoiceHeader.FINDFIRST THEN
-                            XMLPORT.EXPORT(XMLPORT::"EI-ExportInvoice", FileOutStream, SalesInvoiceHeader);
+                            XMLPORT.EXPORT(XMLPORT::"EI-ExportLocalInvoice", FileOutStream, SalesInvoiceHeader);
 
-                        tempBlob.Blob.CreateInStream(FileInStream);
                     END;
                 DATABASE::"Sales Cr.Memo Header":
                     BEGIN
                         SalesCrMemoHeader.SETFILTER("No.", FORMAT(Field.VALUE));
-                        //XMLPORT.EXPORT(XMLPORT::"Export Sales Cr.Memo",FileOutStream,SalesCrMemoHeader);
+                        SalesCrMemoHeader.SETRANGE(SalesCrMemoHeader."Doc. Type DIAN", '91');
+                        if SalesCrMemoHeader.FindFirst() then
+                            XMLPORT.EXPORT(XMLPORT::"EI-ExportCreditMemo", FileOutStream, SalesCrMemoHeader);
+                        tempBlob.Blob.CreateInStream(FileInStream);
                     END;
 
             END;
+
+            tempBlob.Blob.CreateInStream(FileInStream);
             //XmlFile.CLOSE;
 
             // WITH RecordLink DO BEGIN
@@ -616,7 +626,7 @@ codeunit 50100 "FAE-WS Send"
         XMLDOMManagement.AddElement(CurrentXMlNode, 'fileName', filename, '', XMLNode);
 
 
-        //XMLDOMManagement.AddElement(CurrentXMlNode, 'fileData', 'xxxxxx', '', XMLNode);
+        XMLDOMManagement.AddElement(CurrentXMlNode, 'fileData', GetFileB64String(dnetArray), '', XMLNode);
         XMLDOMManagement.AddElement(CurrentXMlNode, 'companyId', companyId, '', XMLNode);
         XMLDOMManagement.AddElement(CurrentXMlNode, 'accountId', accountId, '', XMLNode);
     END;

@@ -1,6 +1,6 @@
 page 50102 "EI-PaymentMeans"
 {
-    PageType = Card;
+    PageType = List;
     ApplicationArea = All;
     UsageCategory = Administration;
     SourceTable = "EI-PaymentMeans";
@@ -9,7 +9,7 @@ page 50102 "EI-PaymentMeans"
     {
         area(Content)
         {
-            group(GroupName)
+            repeater(General)
             {
                 field("PM Code"; "PM Code")
                 {

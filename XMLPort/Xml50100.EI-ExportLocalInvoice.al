@@ -1,4 +1,4 @@
-xmlport 50100 "EI-ExportInvoice"
+xmlport 50100 "EI-ExportLocalInvoice"
 {
     Format = Xml;
     Direction = Export;
@@ -818,7 +818,7 @@ xmlport 50100 "EI-ExportInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        DRF_2 := format(NoSerieLine."Starting Date");
+                        DRF_2 := format(NoSerieLine."Starting Date", 0, '<Year4>-<Month,2>-<Day,2>'); 
                     end;
                 }
 
@@ -826,7 +826,7 @@ xmlport 50100 "EI-ExportInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        DRF_3 := format(NoSerieLine."Resolution Ending Date");
+                        DRF_3 := format(NoSerieLine."Resolution Ending Date", 0, '<Year4>-<Month,2>-<Day,2>'); 
                     end;
                 }
 
@@ -1121,7 +1121,7 @@ xmlport 50100 "EI-ExportInvoice"
             tableelement("ITE"; "Sales Invoice Line")
             {
                 LinkTable = ENC;
-                LinkFields = "Document No." = field ("No.");
+                LinkFields = "Document No." = field("No.");
 
                 textelement(ITE_1)
                 {

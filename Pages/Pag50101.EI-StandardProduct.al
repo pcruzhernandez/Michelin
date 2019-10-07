@@ -1,16 +1,15 @@
-page 50100 "IE-Setup"
+page 50101 "EI-StandardProduct"
 {
     PageType = Card;
     ApplicationArea = All;
     UsageCategory = Administration;
-    SourceTable = "EI-Setup";
-
+    SourceTable = "EI-StandardProduct";
 
     layout
     {
         area(Content)
         {
-            group(GroupName)
+            group(General)
             {
                 field(Enviroment; Enviroment)
                 {
@@ -81,46 +80,15 @@ page 50100 "IE-Setup"
                 {
                     ApplicationArea = All;
                 }
-                field("Electronic Invoice Company ID"; "Electronic Invoice Company ID")
-                {
 
-                }
-                field("Elec. Inv. Account ID"; "Elec. Inv. Account ID")
+                field("Export Expense 3"; "Export Expense 3")
                 {
-
-                }
-                field("Electronic Invoice User"; "Electronic Invoice User")
-                {
-
-                }
-                field("Electronic Invoice Pass"; "Electronic Invoice Pass")
-                {
-                    ExtendedDatatype = Masked;
+                    ApplicationArea = All;
                 }
 
-                field("Electronic Invoice Endpoint"; "Electronic Invoice Endpoint")
+                field("Export Expense 4"; "Export Expense 4")
                 {
-
-                }
-                field("Electronic Invoice Path"; "Electronic Invoice Path")
-                {
-
-                }
-                field("Use Proxy"; "Use Proxy")
-                {
-
-                }
-                field(Proxy; Proxy)
-                {
-
-                }
-                field(Port; Port)
-                {
-
-                }
-                field("Send FAE Automatic"; "Send FAE Automatic")
-                {
-
+                    ApplicationArea = All;
                 }
             }
         }

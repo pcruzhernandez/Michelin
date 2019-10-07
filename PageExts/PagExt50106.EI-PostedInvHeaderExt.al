@@ -10,6 +10,17 @@ pageextension 50106 "IE-PostedInvHeaderExt" extends "Posted Sales Invoice"
                 {
 
                 }
+
+                field("Elec. Invoice Stat. Error"; "Elec. Invoice Stat. Error")
+                {
+
+                }
+
+                field("Elec. Invoice Stat. Error 2"; "Elec. Invoice Stat. Error 2")
+                {
+
+                }
+
                 field("Electronic Invoice Status"; "Electronic Invoice Status")
                 {
 
@@ -91,22 +102,22 @@ pageextension 50106 "IE-PostedInvHeaderExt" extends "Posted Sales Invoice"
                         cu.SendMethod(l_opWebServices::DocumentStatus, '', FileInStream, l_dnetArray, "No.", l_documents, 112, 0);
                     end;
                 }
-                Action("Download Documents")
-                {
-                    ApplicationArea = All;
-                    Caption = 'Download Documents';
-                    Image = ValidateEmailLoggingSetup;
-                    trigger OnAction();
-                    var
-                        cu: codeunit 50100;
-                        l_opWebServices: Option Upload,DocumentStatus,Download,AvaliableDocument,DownloadDocuments;
-                        fileInStream: InStream;
-                        l_dnetArray: DotNet NETArray;
-                        l_documents: array[40, 2] of Text[20];
-                    begin
-                        cu.SendMethod(l_opWebServices::DownloadDocuments, '', FileInStream, l_dnetArray, "No.", l_documents, 112, 0);
-                    end;
-                }
+                // Action("Download Documents")
+                // {
+                //     ApplicationArea = All;
+                //     Caption = 'Download Documents';
+                //     Image = ValidateEmailLoggingSetup;
+                //     trigger OnAction();
+                //     var
+                //         cu: codeunit 50100;
+                //         l_opWebServices: Option Upload,DocumentStatus,Download,AvaliableDocument,DownloadDocuments;
+                //         fileInStream: InStream;
+                //         l_dnetArray: DotNet NETArray;
+                //         l_documents: array[40, 2] of Text[20];
+                //     begin
+                //         cu.SendMethod(l_opWebServices::DownloadDocuments, '', FileInStream, l_dnetArray, "No.", l_documents, 112, 0);
+                //     end;
+                // }
                 Action("Create XML")
                 {
                     ApplicationArea = All;

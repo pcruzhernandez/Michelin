@@ -24,9 +24,8 @@ tableextension 50106 "EI-SalesCrMemoHeaderExt" extends "Sales Cr.Memo Header"
         }
         field(50108; "Electronic Invoice Status"; Option)
         {
-            OptionCaption = 'Accepted,Rejected,In process,Fail';
-            OptionMembers = Accepted,Rejected,"In process",Fail;
-            DataClassification = ToBeClassified;
+            OptionCaption = ' ,Accepted,Rejected,In process,Fail';
+            OptionMembers = " ",Accepted,Rejected,"In process",Fail;
 
         }
 

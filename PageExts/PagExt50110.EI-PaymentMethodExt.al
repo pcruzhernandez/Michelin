@@ -8,6 +8,10 @@ pageextension 50110 "IE-PaymentMethod" extends "Payment Methods"
             {
                 ApplicationArea = All;
             }
+            field(Credit; Credit)
+            {
+                ApplicationArea = All;
+            }
         }
     }
 }

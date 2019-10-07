@@ -1,6 +1,6 @@
 page 50103 "EI-UnitOfMeasure"
 {
-    PageType = Card;
+    PageType = List;
     ApplicationArea = All;
     UsageCategory = Administration;
     SourceTable = "EI-UnitOfMeasure";
@@ -9,7 +9,7 @@ page 50103 "EI-UnitOfMeasure"
     {
         area(Content)
         {
-            group(GroupName)
+            repeater(General)
             {
                 field("UOM Code"; "UOM Code")
                 {

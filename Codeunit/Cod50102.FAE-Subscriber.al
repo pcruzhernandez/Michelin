@@ -20,7 +20,7 @@ codeunit 50102 "FAE-Subscriber"
         l_recCrMeno: Record 114;
     begin
         EISetup.GET();
-        if EISetup."Send FAE Automatic" then begin
+        if EISetup."Send EI Automatic" then begin
             if SalesCrMemoHdrNo <> '' then begin
                 l_recCrMeno.GET(SalesCrMemoHdrNo);
                 l_cuWSSend.GenerateRecordLink(l_recCrMeno);

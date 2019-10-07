@@ -26,7 +26,7 @@ table 50100 "EI-Setup"
 
         field(4; "Product Standard"; Code[20])
         {
-            TableRelation = Item;
+            TableRelation = "EI-StandardProduct";
         }
 
         field(5; TEXT1; Text[250])
@@ -120,7 +120,7 @@ table 50100 "EI-Setup"
             DataClassification = ToBeClassified;
 
         }
-        field(25; "Send FAE Automatic"; Boolean)
+        field(25; "Send EI Automatic"; Boolean)
         {
             DataClassification = ToBeClassified;
 
