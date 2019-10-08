@@ -958,6 +958,7 @@ xmlport 50101 "EI-ExportExportationInvoice"
                         varInStream: InStream;
                         reportCheque: Report Check;
                         textAmount: array[2] of Text[80];
+                        cuFunctions: Codeunit Functions;
                     begin
                         case "NOT".number of
                             1:
@@ -1073,8 +1074,11 @@ xmlport 50101 "EI-ExportExportationInvoice"
                             23:
                                 begin
                                     ENC.CalcFields("Amount Including VAT");
-                                    reportCheque.InitTextVariable();
-                                    reportCheque.FormatNoText(textAmount, TotalAmountInclVAT(ENC."No."), ENC."Currency Code");
+                                    //reportCheque.InitTextVariable();
+                                    //reportCheque.FormatNoText(textAmount, TotalAmountInclVAT(ENC."No."), ENC."Currency Code");
+                                    Clear(cuFunctions);
+                                    cuFunctions.InitTextVariable();
+                                    cuFunctions.FormatNoText(textAmount, ENC."Amount Including VAT", ENC."Currency Code");
                                     NOT_1 := DelChr(textAmount[1] + textAmount[2], '=', '*');
                                 end;
 

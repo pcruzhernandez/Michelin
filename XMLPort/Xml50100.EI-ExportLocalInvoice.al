@@ -818,7 +818,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        DRF_2 := format(NoSerieLine."Starting Date", 0, '<Year4>-<Month,2>-<Day,2>'); 
+                        DRF_2 := format(NoSerieLine."Starting Date");
                     end;
                 }
 
@@ -826,7 +826,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        DRF_3 := format(NoSerieLine."Resolution Ending Date", 0, '<Year4>-<Month,2>-<Day,2>'); 
+                        DRF_3 := format(NoSerieLine."Resolution Ending Date");
                     end;
                 }
 
@@ -934,8 +934,8 @@ xmlport 50100 "EI-ExportLocalInvoice"
                     trigger OnBeforePassVariable()
                     var
                         varInStream: InStream;
-                        reportCheque: Report Check;
                         textAmount: array[2] of Text[80];
+                        cuFunctions: Codeunit Functions;
                     begin
                         case "NOT".number of
                             1:
@@ -984,8 +984,12 @@ xmlport 50100 "EI-ExportLocalInvoice"
                             8:
                                 begin
                                     ENC.CalcFields("Amount Including VAT");
-                                    reportCheque.InitTextVariable();
-                                    reportCheque.FormatNoText(textAmount, TotalAmountInclVAT(ENC."No."), ENC."Currency Code");
+                                    //reportCheque.InitTextVariable();
+                                    //reportCheque.FormatNoText(textAmount, TotalAmountInclVAT(ENC."No."), ENC."Currency Code");
+                                    //reportCheque.FormatNoText(textAmount, 1234.45, ENC."Currency Code");                                    
+                                    Clear(cuFunctions);
+                                    cuFunctions.InitTextVariable();
+                                    cuFunctions.FormatNoText(textAmount, ENC."Amount Including VAT", ENC."Currency Code");
                                     NOT_1 := DelChr(textAmount[1] + textAmount[2], '=', '*');
                                 end;
 
