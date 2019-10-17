@@ -7,7 +7,7 @@ codeunit 50102 "EI-WS Subscriber"
     var
         l_cuWSSend: Codeunit 50100;
     begin
-        l_cuWSSend.Validations(SalesHeader."No.");
+        l_cuWSSend.Validations(SalesHeader);
     end;
 
 

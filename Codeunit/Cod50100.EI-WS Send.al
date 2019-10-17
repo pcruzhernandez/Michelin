@@ -74,7 +74,7 @@ codeunit 50100 "EI-WS Send"
         MsgOK: TextConst ENU = 'File correctly loaded.';
         ErrTableID: TextConst ENU = 'Wrong ID Table.';
 
-    procedure Validations(p_NoDocument: Code[20])
+    procedure Validations(p_recSalesHeader: Record 36)
     var
         Currency: Record 4;
         Customer: Record 18;
@@ -201,23 +201,16 @@ codeunit 50100 "EI-WS Send"
 
 
 
-        if SalesHeader.GET(SalesHeader."Document Type"::Invoice, p_NoDocument) then begin
-            // Comprobaciones en Cliente
-            Customer.GET(SalesHeader."Bill-to Customer No.");
-        end else begin
-            if salesHeader.GET(SalesHeader."Document Type"::"Credit Memo", p_NoDocument) then begin
-                Customer.GET(SalesHeader."Bill-to Customer No.");
-            end;
-        end;
-
-        if SalesHeader."Tax Area Code" = '' then
+        Customer.GET(p_recSalesHeader."Bill-to Customer No.");
+        
+        if p_recSalesHeader."Tax Area Code" = '' then
             ERROR(PM02);
-        if SalesHeader."Ship-to Post Code" = '' then
+        if p_recSalesHeader."Ship-to Post Code" = '' then
             ERROR(PM03);
-        if SalesHeader."Bill-to Post Code" = '' then
+        if p_recSalesHeader."Bill-to Post Code" = '' then
             ERROR(PM04);
 
-        if SalesHeader."Currency Code" = '' then
+        if p_recSalesHeader."Currency Code" = '' then
             ERROR(PM05);
 
 
@@ -268,28 +261,28 @@ codeunit 50100 "EI-WS Send"
 
         // Comprobaciones en cabecera
 
-        if SalesHeader."Doc. Type DIAN" = '' then
+        if p_recSalesHeader."Doc. Type DIAN" = '' then
             error(SE05);
 
 
-        if salesheader."Doc. Type DIAN" = '02' then begin
-            if SalesHeader."Shiptment Port" = '' then
+        if p_recSalesHeader."Doc. Type DIAN" = '02' then begin
+            if p_recSalesHeader."Shiptment Port" = '' then
                 error(SE06);
-            if SalesHeader."Destination Port" = '' then
+            if p_recSalesHeader."Destination Port" = '' then
                 error(SE07);
-            if SalesHeader."Gross Weight" = '' then
+            if p_recSalesHeader."Gross Weight" = '' then
                 error(SE08);
-            if SalesHeader."Shipping Information" = '' then
+            if p_recSalesHeader."Shipping Information" = '' then
                 error(SE09);
-            if SalesHeader."Net Weight" = '' then
+            if p_recSalesHeader."Net Weight" = '' then
                 error(SE10);
         end;
-        if (SalesHeader."Doc. Type DIAN" = '91') or (SalesHeader."Doc. Type DIAN" = '92') then
-            if SalesHeader."EIConcept" = '' then
+        if (p_recSalesHeader."Doc. Type DIAN" = '91') or (p_recSalesHeader."Doc. Type DIAN" = '92') then
+            if p_recSalesHeader."EIConcept" = '' then
                 error(SE11);
 
         //Control Paymenth Method
-        PaymentMethod.GET(SalesHeader."Payment Method Code");
+        PaymentMethod.GET(p_recSalesHeader."Payment Method Code");
         if PaymentMethod."Payment Means" = '' then
             Error(PM01);
 
@@ -322,12 +315,12 @@ codeunit 50100 "EI-WS Send"
         //     ERROR(DO06 + SalesHeader."No.");
 
         // Comprobaciones en N§ Serie
-        NoSeriesLine.SETRANGE("Series Code", SalesHeader."Posting No. Series");
-        NoSeriesLine.SETFILTER("Starting No.", '<=%1', NoSeriesManagement.GetNextNo(SalesHeader."Posting No. Series", SalesHeader."Posting Date", FALSE));
-        NoSeriesLine.SETFILTER("Ending No.", '>=%1', NoSeriesManagement.GetNextNo(SalesHeader."Posting No. Series", SalesHeader."Posting Date", FALSE));
+        NoSeriesLine.SETRANGE("Series Code", p_recSalesHeader."Posting No. Series");
+        NoSeriesLine.SETFILTER("Starting No.", '<=%1', NoSeriesManagement.GetNextNo(p_recSalesHeader."Posting No. Series", p_recSalesHeader."Posting Date", FALSE));
+        NoSeriesLine.SETFILTER("Ending No.", '>=%1', NoSeriesManagement.GetNextNo(p_recSalesHeader."Posting No. Series", p_recSalesHeader."Posting Date", FALSE));
         IF NoSeriesLine.FINDFIRST THEN BEGIN
             IF NoSeriesLine."Resolution No." = '' THEN
-                ERROR(SE01 + SalesHeader."Posting No. Series");
+                ERROR(SE01 + p_recSalesHeader."Posting No. Series");
 
             // IF NoSeriesLine."Resolution Date" = 0D THEN
             //   ERROR(SE02 + SalesHeader."Posting No. Series");
@@ -340,8 +333,8 @@ codeunit 50100 "EI-WS Send"
         END;
 
         // Comprobaciones en l¡neas
-        SalesLine.SETRANGE("Document Type", SalesHeader."Document Type");
-        SalesLine.SETRANGE("Document No.", SalesHeader."No.");
+        SalesLine.SETRANGE("Document Type", p_recSalesHeader."Document Type");
+        SalesLine.SETRANGE("Document No.", p_recSalesHeader."No.");
         SalesLine.SETFILTER("Unit of Measure Code", '<>%1', '');
         IF SalesLine.FINDFIRST THEN
             REPEAT
