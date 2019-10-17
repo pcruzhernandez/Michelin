@@ -203,8 +203,8 @@ codeunit 50100 "EI-WS Send"
 
         Customer.GET(p_recSalesHeader."Bill-to Customer No.");
         
-        if p_recSalesHeader."Tax Area Code" = '' then
-            ERROR(PM02);
+        // if p_recSalesHeader."Tax Area Code" = '' then
+        //     ERROR(PM02);
         if p_recSalesHeader."Ship-to Post Code" = '' then
             ERROR(PM03);
         if p_recSalesHeader."Bill-to Post Code" = '' then
