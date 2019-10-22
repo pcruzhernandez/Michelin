@@ -147,7 +147,14 @@ xmlport 50102 "EI-ExportCreditMemo"
                     CountryRegionCustomer.Get(Customer."Country/Region Code");
 
                     Clear(Currency);
-                    Currency.get(ENC."Currency Code");
+                    if ENC."Currency Code" <> '' then
+                        Currency.get(ENC."Currency Code")
+                    else
+                        if customer."Currency Code" <> '' then
+                            Currency.get(customer."Currency Code")
+                        else
+                            if l_recGeneralLedgerSetup."LCY Code" <> '' then
+                                Currency.get(l_recGeneralLedgerSetup."LCY Code");
 
                     Clear(PaymentMethod);
                     PaymentMethod.Get(ENC."Payment Method Code");
@@ -743,7 +750,7 @@ xmlport 50102 "EI-ExportCreditMemo"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        TIM_3 := ENC."Currency Code";
+                        TIM_3 := Currency.Code;
                     end;
                 }
 
@@ -769,7 +776,7 @@ xmlport 50102 "EI-ExportCreditMemo"
                     {
                         trigger OnBeforePassVariable()
                         begin
-                            IMP_3 := ENC."Currency Code";
+                            IMP_3 := Currency.Code;
                         end;
                     }
 
@@ -785,7 +792,7 @@ xmlport 50102 "EI-ExportCreditMemo"
                     {
                         trigger OnBeforePassVariable()
                         begin
-                            IMP_5 := ENC."Currency Code";
+                            IMP_5 := Currency.Code;
                         end;
                     }
 
@@ -818,7 +825,7 @@ xmlport 50102 "EI-ExportCreditMemo"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        DRF_2 := format(NoSerieLine."Starting Date", 0, '<Year4>-<Month,2>-<Day,2>'); 
+                        DRF_2 := format(NoSerieLine."Starting Date", 0, '<Year4>-<Month,2>-<Day,2>');
                     end;
                 }
 
@@ -826,7 +833,7 @@ xmlport 50102 "EI-ExportCreditMemo"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        DRF_3 := format(NoSerieLine."Resolution Ending Date", 0, '<Year4>-<Month,2>-<Day,2>'); 
+                        DRF_3 := format(NoSerieLine."Resolution Ending Date", 0, '<Year4>-<Month,2>-<Day,2>');
                     end;
                 }
 
@@ -955,7 +962,7 @@ xmlport 50102 "EI-ExportCreditMemo"
 
                             4:
                                 begin
-                                    NOT_1 := ENC."Currency Code";
+                                    NOT_1 := Currency.Code;
                                 end;
 
                             5:
@@ -1111,7 +1118,7 @@ xmlport 50102 "EI-ExportCreditMemo"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ITE_6 := ENC."Currency Code";
+                        ITE_6 := Currency.Code;
                     end;
                 }
 
@@ -1127,7 +1134,7 @@ xmlport 50102 "EI-ExportCreditMemo"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ITE_8 := ENC."Currency Code";
+                        ITE_8 := Currency.Code;
                     end;
                 }
 
@@ -1159,7 +1166,7 @@ xmlport 50102 "EI-ExportCreditMemo"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ITE_20 := ENC."Currency Code";
+                        ITE_20 := Currency.Code;
                     end;
                 }
 
@@ -1175,7 +1182,7 @@ xmlport 50102 "EI-ExportCreditMemo"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ITE_22 := ENC."Currency Code";
+                        ITE_22 := Currency.Code;
                     end;
                 }
 
@@ -1241,6 +1248,8 @@ xmlport 50102 "EI-ExportCreditMemo"
         Item: Record Item;
         DianSetup: Record "DIAN Setup";
         NoSerieLine: Record "No. Series Line";
+
+        l_recGeneralLedgerSetup: Record "General Ledger Setup";
 
 
 

@@ -147,7 +147,14 @@ xmlport 50100 "EI-ExportLocalInvoice"
                     CountryRegionCustomer.Get(Customer."Country/Region Code");
 
                     Clear(Currency);
-                    Currency.get(ENC."Currency Code");
+                    if ENC."Currency Code" <> '' then
+                        Currency.get(ENC."Currency Code")
+                    else   
+                        if customer."Currency Code" <>  '' then
+                            Currency.get(customer."Currency Code")
+                        else
+                            if l_recGeneralLedgerSetup."LCY Code" <> '' then
+                                Currency.get(l_recGeneralLedgerSetup."LCY Code");
 
                     Clear(PaymentMethod);
                     PaymentMethod.Get(ENC."Payment Method Code");
@@ -743,7 +750,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        TIM_3 := ENC."Currency Code";
+                        TIM_3 := Currency.Code;
                     end;
                 }
 
@@ -769,7 +776,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                     {
                         trigger OnBeforePassVariable()
                         begin
-                            IMP_3 := ENC."Currency Code";
+                            IMP_3 := Currency.Code;
                         end;
                     }
 
@@ -785,7 +792,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                     {
                         trigger OnBeforePassVariable()
                         begin
-                            IMP_5 := ENC."Currency Code";
+                            IMP_5 := Currency.Code;
                         end;
                     }
 
@@ -989,7 +996,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                                     //reportCheque.FormatNoText(textAmount, 1234.45, ENC."Currency Code");                                    
                                     Clear(cuFunctions);
                                     cuFunctions.InitTextVariable();
-                                    cuFunctions.FormatNoText(textAmount, ENC."Amount Including VAT", ENC."Currency Code");
+                                    cuFunctions.FormatNoText(textAmount, ENC."Amount Including VAT", Currency.Code);
                                     NOT_1 := DelChr(textAmount[1] + textAmount[2], '=', '*');
                                 end;
 
@@ -1163,7 +1170,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ITE_6 := ENC."Currency Code";
+                        ITE_6 := Currency.Code;
                     end;
                 }
 
@@ -1179,7 +1186,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ITE_8 := ENC."Currency Code";
+                        ITE_8 := Currency.Code;
                     end;
                 }
 
@@ -1211,7 +1218,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ITE_20 := ENC."Currency Code";
+                        ITE_20 := Currency.Code;
                     end;
                 }
 
@@ -1227,7 +1234,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ITE_22 := ENC."Currency Code";
+                        ITE_22 := Currency.Code;
                     end;
                 }
 
@@ -1293,7 +1300,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
         Item: Record Item;
         DianSetup: Record "DIAN Setup";
         NoSerieLine: Record "No. Series Line";
-
+        l_recGeneralLedgerSetup : Record "General Ledger Setup" ;
 
 
     trigger OnPreXmlPort()

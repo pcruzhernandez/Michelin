@@ -152,11 +152,13 @@ codeunit 50100 "EI-WS Send"
         Canceled: TextConst ENU = 'Canceled by user.', ESP = 'Cancelado por el usuario.';
         NoSeriesManagement: Codeunit 396;
         PaymentMethod: Record "Payment Method";
+        l_recGeneralLedgerSetup: record "General Ledger Setup";
 
     begin
         // Comprobaciones en Informaci¢n de empresa
         CompanyInfo.GET;
         EI_Setup.GET;
+        l_recGeneralLedgerSetup.GET;
 
         IF CompanyInfo."VAT Registration No." = '' THEN
             ERROR(CI01);
@@ -202,7 +204,7 @@ codeunit 50100 "EI-WS Send"
 
 
         Customer.GET(p_recSalesHeader."Bill-to Customer No.");
-        
+
         // if p_recSalesHeader."Tax Area Code" = '' then
         //     ERROR(PM02);
         if p_recSalesHeader."Ship-to Post Code" = '' then
@@ -211,7 +213,9 @@ codeunit 50100 "EI-WS Send"
             ERROR(PM04);
 
         if p_recSalesHeader."Currency Code" = '' then
-            ERROR(PM05);
+            if customer."Currency Code" = '' then
+                if l_recGeneralLedgerSetup."LCY Code" = '' then
+                    ERROR(PM05);
 
 
 
