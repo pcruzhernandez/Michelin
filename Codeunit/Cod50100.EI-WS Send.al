@@ -54,6 +54,7 @@ dotnet
 
 codeunit 50100 "EI-WS Send"
 {
+    Permissions = tabledata 112 = rimd,tabledata 114 = rimd;
     trigger OnRun()
     var
         p_optMethod: Option Upload,DocumentStatus,Download,AvaliableDocument,DownloadDocuments;
@@ -217,11 +218,6 @@ codeunit 50100 "EI-WS Send"
                 if l_recGeneralLedgerSetup."LCY Code" = '' then
                     ERROR(PM05);
 
-
-
-
-
-
         IF Customer."VAT Registration No." = '' THEN
             ERROR(CU01);
 
@@ -375,6 +371,7 @@ codeunit 50100 "EI-WS Send"
         prueba: XmlPort "Export Contact";
         recContact: Record Contact;
         tempBlob: Record TempBlob;
+        
     BEGIN
         IF IsVar.ISRECORD() THEN BEGIN
             Record.GETTABLE(IsVar);
@@ -755,5 +752,5 @@ codeunit 50100 "EI-WS Send"
     BEGIN
         EXIT(NETConvert.ToBase64String(NETArray));
     END;
-
+    
 }
