@@ -54,7 +54,8 @@ dotnet
 
 codeunit 50100 "EI-WS Send"
 {
-    Permissions = tabledata 112 = rimd,tabledata 114 = rimd;
+    Permissions = tabledata "Sales Invoice Header" = RIMD;
+
     trigger OnRun()
     var
         p_optMethod: Option Upload,DocumentStatus,Download,AvaliableDocument,DownloadDocuments;
@@ -131,10 +132,10 @@ codeunit 50100 "EI-WS Send"
         DO04: TextConst ENU = '"The field ""DIAN Code"" is empty in Currency "', ESP = '"El campo ""C¢digo DIAN"" est  vac¡o en Divisa "';
         DO05: TextConst ENU = '"""Applies-to Doc. No."" must be a Sales Invoice in Credit Memo "', ESP = '"""Liq. por N§ Documento"" debe ser una Factura de Ventas en Nota de cr‚dito "';
         DO06: TextConst ENU = '"""Applies-to Doc. No."" must be a Sales Credit Memo in Invoice "', ESP = '"""Liq. por N§ Documento"" debe ser una Nota de cr‚dito de Ventas en Nota de d‚bito "';
-        SE01: TextConst ENU = '"The field ""Resolution No."" is empty in No. Series Code "', ESP = '"El campo ""N§ resoluci¢n DIAN"" est  vac¡o en C¢d. N§ Serie "';
-        SE02: TextConst ENU = '"The field ""Resolution Date"" is empty in No. Series Code "', ESP = '"El campo ""Fecha resoluci¢n"" est  vac¡o en C¢d. N§ Serie "';
-        SE03: TextConst ENU = '"The field ""Resolution Expiration Date"" is empty in No. Series Code "', ESP = '"El campo ""Fecha vcto. resoluci¢n"" est  vac¡o en C¢d. N§ Serie "';
-        SE04: TextConst ENU = '"The field ""Prefix Numbering"" is empty in No. Series Code "', ESP = '"El campo ""Prefijo de numeraci¢n"" est  vac¡o en C¢d. N§ Serie "';
+        SE01: TextConst ENU = 'The field Resolution No. is empty in No. Series Code', ESP = '"El campo ""N§ resoluci¢n DIAN"" est  vac¡o en C¢d. N§ Serie "';
+        SE02: TextConst ENU = 'The field Resolution Ending Date is empty in No. Series Code', ESP = '"El campo ""Fecha resoluci¢n"" est  vac¡o en C¢d. N§ Serie "';
+        SE03: TextConst ENU = 'The field Resolution Warning Date is empty in No. Series Code', ESP = '"El campo ""Fecha vcto. resoluci¢n"" est  vac¡o en C¢d. N§ Serie "';
+        SE04: TextConst ENU = 'The field Starting Date is  empty in No. Series Code ', ESP = '"El campo ""Prefijo de numeraci¢n"" est  vac¡o en C¢d. N§ Serie "';
         SE05: TextConst ENU = '"The field ""Doc. Type DIAN"" is empty in Sales Invoice"', ESP = '"The field ""Doc. Type DIAN"" is empty in Factura de venta "';
         SE06: TextConst ENU = '"The field ""Shiptment Port"" is empty in Sales Invoice"', ESP = '"The field ""Shiptment Port"" is empty in Factura de venta "';
         SE07: TextConst ENU = '"The field ""Destination Port"" is empty in Sales Invoice"', ESP = '"The field ""Destination Port"" is empty in Factura de venta "';
@@ -322,14 +323,14 @@ codeunit 50100 "EI-WS Send"
             IF NoSeriesLine."Resolution No." = '' THEN
                 ERROR(SE01 + p_recSalesHeader."Posting No. Series");
 
-            // IF NoSeriesLine."Resolution Date" = 0D THEN
-            //   ERROR(SE02 + SalesHeader."Posting No. Series");
+            IF NoSeriesLine."Resolution Ending Date" = 0D THEN
+                ERROR(SE02 + SalesHeader."Posting No. Series");
 
-            // IF NoSeriesLine."Resolution Expiration Date" = 0D THEN
-            //   ERROR(SE03 + SalesHeader."Posting No. Series");
+            IF NoSeriesLine."Resolution Warning Date" = 0D THEN
+                ERROR(SE03 + SalesHeader."Posting No. Series");
 
-            // IF (STRLEN(DELCHR(NoSeriesLine."Starting No.",'=','0123456789')) <> 0) AND (NoSeriesLine."Prefix Numbering" = '') THEN
-            //   ERROR(SE04 + SalesHeader."Posting No. Series");
+            IF NoSeriesLine."Starting Date" = 0D THEN
+                ERROR(SE04 + SalesHeader."Posting No. Series");
         END;
 
         // Comprobaciones en l¡neas
@@ -371,7 +372,7 @@ codeunit 50100 "EI-WS Send"
         prueba: XmlPort "Export Contact";
         recContact: Record Contact;
         tempBlob: Record TempBlob;
-        
+
     BEGIN
         IF IsVar.ISRECORD() THEN BEGIN
             Record.GETTABLE(IsVar);
@@ -498,11 +499,11 @@ codeunit 50100 "EI-WS Send"
                             BEGIN
                                 CLEAR(l_recSalesInvoice);
                                 l_recSalesInvoice.GET(p_numfactura);
-                                IF l_recSalesInvoice."XML Transaction ID" = '' THEN
-                                    UploadMethod(XMLDoc, p_texNombreFichero, '', l_recEISetup."Electronic Invoice Company ID", l_recEISetup."Elec. Inv. Account ID",
-                                                 l_recEISetup."Electronic Invoice User", l_recEISetup."Electronic Invoice Pass", p_dnetArray)
-                                ELSE
-                                    EXIT;
+                                //IF l_recSalesInvoice."XML Transaction ID" = '' THEN
+                                UploadMethod(XMLDoc, p_texNombreFichero, '', l_recEISetup."Electronic Invoice Company ID", l_recEISetup."Elec. Inv. Account ID",
+                                             l_recEISetup."Electronic Invoice User", l_recEISetup."Electronic Invoice Pass", p_dnetArray)
+                                //ELSE
+                                //    EXIT;
                             END;
                         p_optMethod::DocumentStatus:
                             BEGIN
@@ -527,11 +528,11 @@ codeunit 50100 "EI-WS Send"
                             BEGIN
                                 CLEAR(l_recSalesCrMemo);
                                 l_recSalesCrMemo.GET(p_numfactura);
-                                IF l_recSalesCrMemo."XML Transaction ID" = '' THEN
-                                    UploadMethod(XMLDoc, p_texNombreFichero, '', l_recEISetup."Electronic Invoice Company ID", l_recEISetup."Elec. Inv. Account ID",
-                                                 l_recEISetup."Electronic Invoice User", l_recEISetup."Electronic Invoice Pass", p_dnetArray)
-                                ELSE
-                                    EXIT;
+                                //IF l_recSalesCrMemo."XML Transaction ID" = '' THEN
+                                UploadMethod(XMLDoc, p_texNombreFichero, '', l_recEISetup."Electronic Invoice Company ID", l_recEISetup."Elec. Inv. Account ID",
+                                             l_recEISetup."Electronic Invoice User", l_recEISetup."Electronic Invoice Pass", p_dnetArray)
+                                //ELSE
+                                //    EXIT;
                             END;
                         p_optMethod::DocumentStatus:
                             BEGIN
@@ -752,5 +753,5 @@ codeunit 50100 "EI-WS Send"
     BEGIN
         EXIT(NETConvert.ToBase64String(NETArray));
     END;
-    
+
 }

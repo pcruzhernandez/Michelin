@@ -8,7 +8,8 @@ pageextension 50106 "IE-PostedInvHeaderExt" extends "Posted Sales Invoice"
             {
                 field("XML Transaction ID"; "XML Transaction ID")
                 {
-
+                    Enabled = true;
+                    Editable = true;
                 }
 
                 field("Elec. Invoice Stat. Error"; "Elec. Invoice Stat. Error")

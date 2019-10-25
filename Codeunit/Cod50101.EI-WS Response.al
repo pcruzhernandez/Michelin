@@ -1,5 +1,6 @@
 codeunit 50101 "EI-WS Response"
 {
+    Permissions = tabledata 112 = rimd, tabledata 114 = rimd;
     trigger OnRun()
     begin
 
@@ -227,10 +228,14 @@ codeunit 50101 "EI-WS Response"
     BEGIN
         IF SalesInvoiceHeader.GET(CodeDocument) THEN BEGIN
             SalesInvoiceHeader."XML Transaction ID" := XMLTransactionID;
+            SalesInvoiceHeader."Elec. Invoice Stat. Error" := '';
+            SalesInvoiceHeader."Elec. Invoice Stat. Error 2" := '';
             SalesInvoiceHeader.MODIFY();
         END ELSE BEGIN
             IF SalesCrMemoHeader.GET(CodeDocument) THEN BEGIN
                 SalesCrMemoHeader."XML Transaction ID" := XMLTransactionID;
+                SalesCrMemoHeader."Elec. Invoice Stat. Error" := '';
+                SalesCrMemoHeader."Elec. Invoice Stat. Error 2" := '';
                 SalesCrMemoHeader.MODIFY();
             end;
         END;

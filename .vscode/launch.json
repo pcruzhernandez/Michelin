@@ -5,14 +5,15 @@
             "type": "al",
             "request": "launch",
             "name": "Michelin",
-            "server": "http://MichelinIndus",
+            "server": "http://172.30.163.176",
             "serverInstance": "NAV",
             "authentication": "Windows",
             "startupObjectId": 143,
             "startupObjectType": "Page",
             "breakOnError": true,
             "launchBrowser": false,
-            "tenant": "default"
+            "tenant": "default",
+            "schemaUpdateMode": "Recreate"
             
         }
     ]

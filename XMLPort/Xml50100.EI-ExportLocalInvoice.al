@@ -149,8 +149,8 @@ xmlport 50100 "EI-ExportLocalInvoice"
                     Clear(Currency);
                     if ENC."Currency Code" <> '' then
                         Currency.get(ENC."Currency Code")
-                    else   
-                        if customer."Currency Code" <>  '' then
+                    else
+                        if customer."Currency Code" <> '' then
                             Currency.get(customer."Currency Code")
                         else
                             if l_recGeneralLedgerSetup."LCY Code" <> '' then
@@ -825,7 +825,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        DRF_2 := format(NoSerieLine."Starting Date");
+                        DRF_2 := format(NoSerieLine."Starting Date", 0, '<Year4>-<Month,2>-<Day,2>');
                     end;
                 }
 
@@ -833,7 +833,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        DRF_3 := format(NoSerieLine."Resolution Ending Date");
+                        DRF_3 := format(NoSerieLine."Resolution Ending Date", 0, '<Year4>-<Month,2>-<Day,2>');
                     end;
                 }
 
@@ -1300,7 +1300,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
         Item: Record Item;
         DianSetup: Record "DIAN Setup";
         NoSerieLine: Record "No. Series Line";
-        l_recGeneralLedgerSetup : Record "General Ledger Setup" ;
+        l_recGeneralLedgerSetup: Record "General Ledger Setup";
 
 
     trigger OnPreXmlPort()
