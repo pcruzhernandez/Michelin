@@ -62,11 +62,8 @@ codeunit 50100 "EI-WS Send"
         instr: InStream;
         Netarray: DotNet NETArray;
         doc: array[40, 2] of Text[20];
-        mail: Codeunit Mail;
-        mail2: Codeunit "Mail Management";
     begin
         SendMethod(p_optMethod::Upload, 'xxxxx', instr, Netarray, '103028', doc, 112, 0);
-        mail.NewMessage()
     end;
 
     var
