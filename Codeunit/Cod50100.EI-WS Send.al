@@ -62,8 +62,11 @@ codeunit 50100 "EI-WS Send"
         instr: InStream;
         Netarray: DotNet NETArray;
         doc: array[40, 2] of Text[20];
+        mail: Codeunit Mail;
+        mail2: Codeunit "Mail Management";
     begin
         SendMethod(p_optMethod::Upload, 'xxxxx', instr, Netarray, '103028', doc, 112, 0);
+        mail.NewMessage()
     end;
 
     var
@@ -372,7 +375,7 @@ codeunit 50100 "EI-WS Send"
         prueba: XmlPort "Export Contact";
         recContact: Record Contact;
         tempBlob: Record TempBlob;
-
+        filename: Text[100];
     BEGIN
         IF IsVar.ISRECORD() THEN BEGIN
             Record.GETTABLE(IsVar);
@@ -432,7 +435,6 @@ codeunit 50100 "EI-WS Send"
             END;
 
             tempBlob.Blob.CreateInStream(FileInStream);
-
             CASE Record.NUMBER OF
                 DATABASE::"Sales Invoice Header":
                     BEGIN

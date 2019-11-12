@@ -13,8 +13,7 @@
             "breakOnError": true,
             "launchBrowser": false,
             "tenant": "default",
-            "schemaUpdateMode": "Recreate"
-            
+            "schemaUpdateMode": "Recreate"           
         }
     ]
 }
