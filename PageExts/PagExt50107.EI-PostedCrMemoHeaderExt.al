@@ -116,13 +116,27 @@ pageextension 50107 "IE-PostedCrMemoHeaderExt" extends "Posted Sales Credit Memo
                     trigger OnAction();
                     var
                         var_Xml: XmlPort 50100;
-                        var_PostedInvoice: record "Sales Invoice Header";
+                        var_PostedInvoice: record "Sales Cr.Memo Header";
                         var_cheque: report 1401;
                         var_array: array[2] of Text[80];
+                        SalesCrHeader: Record "Sales Cr.Memo Header";
+                        FileOutStream: OutStream;
+                        tempBlob: Record TempBlob;
+                        FileInStream: InStream;
+                        filename: Text[100];
                     begin
-                        CurrPage.SetSelectionFilter(var_PostedInvoice);
-                        var_Xml.SetTableView(var_PostedInvoice);
-                        var_Xml.Run();
+                        tempBlob.blob.CreateOutStream(FileOutStream);
+
+                        //NOTA DEBITO
+                        SalesCrHeader.SETFILTER("No.", rec."No.");
+                        SalesCrHeader.SETRANGE(SalesCrHeader."Doc. Type DIAN", '91');
+                        IF SalesCrHeader.FINDFIRST THEN
+                            XMLPORT.EXPORT(XMLPORT::"EI-ExportCreditMemo", FileOutStream, SalesCrHeader);
+
+
+                        tempBlob.Blob.CreateInStream(FileInStream);
+                        filename := SalesCrHeader."No." + '.xml';
+                        DownloadFromStream(FileInStream, '', '', '', filename);
                     end;
                 }
             }

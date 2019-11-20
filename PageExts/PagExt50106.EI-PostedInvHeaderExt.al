@@ -163,31 +163,6 @@ pageextension 50106 "IE-PostedInvHeaderExt" extends "Posted Sales Invoice"
                         IF SalesInvoiceHeader.FINDFIRST THEN
                             XMLPORT.EXPORT(XMLPORT::"EI-ExportLocalInvoice", FileOutStream, SalesInvoiceHeader);
 
-                        SalesInvoiceHeader.SETFILTER("No.", rec."No.");
-                        SalesInvoiceHeader.SETRANGE(SalesInvoiceHeader."Doc. Type DIAN", '01');
-                        IF SalesInvoiceHeader.FINDFIRST THEN
-                            XMLPORT.EXPORT(XMLPORT::"EI-ExportLocalInvoice", FileOutStream, SalesInvoiceHeader);
-                        //Factura EXP
-                        SalesInvoiceHeader.SETFILTER("No.", rec."No.");
-                        SalesInvoiceHeader.SETRANGE(SalesInvoiceHeader."Doc. Type DIAN", '02');
-                        IF SalesInvoiceHeader.FINDFIRST THEN
-                            XMLPORT.EXPORT(XMLPORT::"EI-ExportExportationInvoice", FileOutStream, SalesInvoiceHeader);
-                        // Factura NAC
-                        SalesInvoiceHeader.SETFILTER("No.", rec."No.");
-                        SalesInvoiceHeader.SETRANGE(SalesInvoiceHeader."Doc. Type DIAN", '03');
-                        IF SalesInvoiceHeader.FINDFIRST THEN
-                            XMLPORT.EXPORT(XMLPORT::"EI-ExportLocalInvoice", FileOutStream, SalesInvoiceHeader);
-                        //Factura EXP
-                        SalesInvoiceHeader.SETFILTER("No.", rec."No.");
-                        SalesInvoiceHeader.SETRANGE(SalesInvoiceHeader."Doc. Type DIAN", '04');
-                        IF SalesInvoiceHeader.FINDFIRST THEN
-                            XMLPORT.EXPORT(XMLPORT::"EI-ExportLocalInvoice", FileOutStream, SalesInvoiceHeader);
-                        //NOTA DEBITO
-                        SalesInvoiceHeader.SETFILTER("No.", rec."No.");
-                        SalesInvoiceHeader.SETRANGE(SalesInvoiceHeader."Doc. Type DIAN", '92');
-                        IF SalesInvoiceHeader.FINDFIRST THEN
-                            XMLPORT.EXPORT(XMLPORT::"EI-ExportLocalInvoice", FileOutStream, SalesInvoiceHeader);
-
                         tempBlob.Blob.CreateInStream(FileInStream);
                         filename := SalesInvoiceHeader."No." + '.xml';
                         DownloadFromStream(FileInStream, '', '', '', filename);

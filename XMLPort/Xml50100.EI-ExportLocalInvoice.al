@@ -117,7 +117,10 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ENC_20 := format(EISetup.Enviroment);
+                        if EISetup.Enviroment = EISetup.Enviroment::Production then
+                            ENC_20 := '1'
+                        else
+                            ENC_20 := '2';
                     end;
                 }
 
@@ -442,7 +445,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ADQ_3 := Customer."Document Type";
+                        ADQ_3 := Customer."Document Type Identity DIAN";
                     end;
                 }
 
@@ -576,7 +579,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                     {
                         trigger OnBeforePassVariable()
                         begin
-                            ILA_3 := Customer."Document Type";
+                            ILA_3 := Customer."Document Type Identity DIAN";
                         end;
                     }
 
@@ -741,8 +744,8 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 textelement(TIM_2)
                 {
                     trigger OnBeforePassVariable()
-                    begin
-                        TIM_2 := delchr(format(TIM.Amount), '=', '.');
+                    begin                      
+                        TIM_2 := ConvertSTR(delchr(format(TIM.Amount), '=', '.'),',','.');
                     end;
                 }
 
@@ -784,7 +787,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                     {
                         trigger OnBeforePassVariable()
                         begin
-                            IMP_4 := delchr(format(TIM.Amount), '=', '.');
+                            IMP_4 := CONVERTSTR(delchr(format(TIM.Amount), '=', '.'),',','.');
                         end;
                     }
 
@@ -800,7 +803,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                     {
                         trigger OnBeforePassVariable()
                         begin
-                            IMP_6 := delchr(format(TIM."Tax Above Maximum COL"), '=', '.');
+                            IMP_6 := ConvertStr(delchr(format(TIM."Tax Above Maximum COL",0,'<Precision,2:2>'), '=', '.'),',','.');
                         end;
                     }
                 }
@@ -887,7 +890,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        AQF_2 := Customer."Document Type";
+                        AQF_2 := Customer."Document Type Identity DIAN";
                     end;
                 }
 
@@ -1124,7 +1127,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        MEP_3 := format(ENC."Due Date", 0, '<Year4><Month,2><Day,2>');
+                        MEP_3 := format(ENC."Due Date", 0, '<Year4>-<Month,2>-<Day,2>');
                     end;
                 }
             }
@@ -1178,7 +1181,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ITE_7 := delchr(format(ITE."Unit Price"), '=', '.');
+                        ITE_7 := CONVERTSTR(delchr(format(ITE."Unit Price"), '=', '.'),',','.');
                     end;
                 }
 
@@ -1210,7 +1213,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ITE_19 := delchr(Format(ITE.Amount), '=', '.');
+                        ITE_19 := CONVERTSTR(delchr(Format(ITE.Amount), '=', '.'),',','.');
                     end;
                 }
 
@@ -1226,7 +1229,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ITE_21 := delchr(Format(ITE."Amount Including VAT"), '=', '.');
+                        ITE_21 := CONVERTSTR(delchr(Format(ITE."Amount Including VAT"), '=', '.'),',','.');
                     end;
                 }
 

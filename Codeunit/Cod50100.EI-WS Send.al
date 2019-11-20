@@ -54,7 +54,8 @@ dotnet
 
 codeunit 50100 "EI-WS Send"
 {
-    Permissions = tabledata "Sales Invoice Header" = RIMD;
+    Permissions = tabledata "Sales Invoice Header" = RIMD, tabledata 114 = RIMD;
+
 
     trigger OnRun()
     var
@@ -316,22 +317,24 @@ codeunit 50100 "EI-WS Send"
         //     ERROR(DO06 + SalesHeader."No.");
 
         // Comprobaciones en N§ Serie
-        NoSeriesLine.SETRANGE("Series Code", p_recSalesHeader."Posting No. Series");
-        NoSeriesLine.SETFILTER("Starting No.", '<=%1', NoSeriesManagement.GetNextNo(p_recSalesHeader."Posting No. Series", p_recSalesHeader."Posting Date", FALSE));
-        NoSeriesLine.SETFILTER("Ending No.", '>=%1', NoSeriesManagement.GetNextNo(p_recSalesHeader."Posting No. Series", p_recSalesHeader."Posting Date", FALSE));
-        IF NoSeriesLine.FINDFIRST THEN BEGIN
-            IF NoSeriesLine."Resolution No." = '' THEN
-                ERROR(SE01 + p_recSalesHeader."Posting No. Series");
+        if (p_recSalesHeader."Doc. Type DIAN" <>'91') or (p_recSalesHeader."Doc. Type DIAN" <> '92') then begin
+            NoSeriesLine.SETRANGE("Series Code", p_recSalesHeader."Posting No. Series");
+            NoSeriesLine.SETFILTER("Starting No.", '<=%1', NoSeriesManagement.GetNextNo(p_recSalesHeader."Posting No. Series", p_recSalesHeader."Posting Date", FALSE));
+            NoSeriesLine.SETFILTER("Ending No.", '>=%1', NoSeriesManagement.GetNextNo(p_recSalesHeader."Posting No. Series", p_recSalesHeader."Posting Date", FALSE));
+            IF NoSeriesLine.FINDFIRST THEN BEGIN
+                IF NoSeriesLine."Resolution No." = '' THEN
+                    ERROR(SE01 + p_recSalesHeader."Posting No. Series");
 
-            IF NoSeriesLine."Resolution Ending Date" = 0D THEN
-                ERROR(SE02 + SalesHeader."Posting No. Series");
+                IF NoSeriesLine."Resolution Ending Date" = 0D THEN
+                    ERROR(SE02 + SalesHeader."Posting No. Series");
 
-            IF NoSeriesLine."Resolution Warning Date" = 0D THEN
-                ERROR(SE03 + SalesHeader."Posting No. Series");
+                IF NoSeriesLine."Resolution Warning Date" = 0D THEN
+                    ERROR(SE03 + SalesHeader."Posting No. Series");
 
-            IF NoSeriesLine."Starting Date" = 0D THEN
-                ERROR(SE04 + SalesHeader."Posting No. Series");
-        END;
+                IF NoSeriesLine."Starting Date" = 0D THEN
+                    ERROR(SE04 + SalesHeader."Posting No. Series");
+            END;
+        end;
 
         // Comprobaciones en l¡neas
         SalesLine.SETRANGE("Document Type", p_recSalesHeader."Document Type");
