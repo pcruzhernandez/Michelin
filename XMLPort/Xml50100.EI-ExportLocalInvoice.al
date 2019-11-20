@@ -654,7 +654,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        TOT_1 := delchr(format(TotalAmountExclVAT(ENC."No.")), '=', '.');
+                        TOT_1 := ConvertSTR(delchr(format(TotalAmountExclVAT(ENC."No.")), '=', '.'), ',', '.');
                     end;
                 }
 
@@ -670,7 +670,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        TOT_3 := delchr(format(TotalBaseVAT(ENC."No.")), '=', '.');
+                        TOT_3 := ConvertSTR(delchr(format(TotalBaseVAT(ENC."No.")), '=', '.'), ',', '.');
                     end;
                 }
 
@@ -686,7 +686,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        TOT_5 := delchr(format(TotalAmountInclVAT(ENC."No.")), '=', '.');
+                        TOT_5 := ConvertSTR(delchr(format(TotalAmountInclVAT(ENC."No.")), '=', '.'), ',', '.');
                     end;
                 }
 
@@ -715,7 +715,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        TOT_9 := delchr(format(TotalDiscountAmount(ENC."No.")), '=', '.');
+                        TOT_9 := ConvertSTR(delchr(format(TotalDiscountAmount(ENC."No.")), '=', '.'), ',', '.');
                     end;
                 }
 
@@ -744,8 +744,8 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 textelement(TIM_2)
                 {
                     trigger OnBeforePassVariable()
-                    begin                      
-                        TIM_2 := ConvertSTR(delchr(format(TIM.Amount), '=', '.'),',','.');
+                    begin
+                        TIM_2 := ConvertSTR(delchr(format(TIM.Amount), '=', '.'), ',', '.');
                     end;
                 }
 
@@ -771,7 +771,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                     {
                         trigger OnBeforePassVariable()
                         begin
-                            IMP_2 := delchr(format(TIM.Base), '=', '.');
+                            IMP_2 := ConvertSTR(delchr(format(TIM.Base), '=', '.'), ',', '.');
                         end;
                     }
 
@@ -787,7 +787,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                     {
                         trigger OnBeforePassVariable()
                         begin
-                            IMP_4 := CONVERTSTR(delchr(format(TIM.Amount), '=', '.'),',','.');
+                            IMP_4 := CONVERTSTR(delchr(format(TIM.Amount), '=', '.'), ',', '.');
                         end;
                     }
 
@@ -803,7 +803,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                     {
                         trigger OnBeforePassVariable()
                         begin
-                            IMP_6 := ConvertStr(delchr(format(TIM."Tax Above Maximum COL",0,'<Precision,2:2>'), '=', '.'),',','.');
+                            IMP_6 := ConvertStr(delchr(format(TIM."Tax Above Maximum COL", 0, '<Precision,2:2>'), '=', '.'), ',', '.');
                         end;
                     }
                 }
@@ -1181,7 +1181,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ITE_7 := CONVERTSTR(delchr(format(ITE."Unit Price"), '=', '.'),',','.');
+                        ITE_7 := CONVERTSTR(delchr(format(ITE."Unit Price"), '=', '.'), ',', '.');
                     end;
                 }
 
@@ -1213,7 +1213,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ITE_19 := CONVERTSTR(delchr(Format(ITE.Amount), '=', '.'),',','.');
+                        ITE_19 := CONVERTSTR(delchr(Format(ITE.Amount), '=', '.'), ',', '.');
                     end;
                 }
 
@@ -1229,7 +1229,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        ITE_21 := CONVERTSTR(delchr(Format(ITE."Amount Including VAT"), '=', '.'),',','.');
+                        ITE_21 := CONVERTSTR(delchr(Format(ITE."Amount Including VAT"), '=', '.'), ',', '.');
                     end;
                 }
 
