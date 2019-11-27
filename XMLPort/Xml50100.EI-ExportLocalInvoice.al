@@ -153,11 +153,8 @@ xmlport 50100 "EI-ExportLocalInvoice"
                     if ENC."Currency Code" <> '' then
                         Currency.get(ENC."Currency Code")
                     else
-                        if customer."Currency Code" <> '' then
-                            Currency.get(customer."Currency Code")
-                        else
-                            if l_recGeneralLedgerSetup."LCY Code" <> '' then
-                                Currency.get(l_recGeneralLedgerSetup."LCY Code");
+                        if l_recGeneralLedgerSetup."LCY Code" <> '' then
+                            Currency.get(l_recGeneralLedgerSetup."LCY Code");
 
                     Clear(PaymentMethod);
                     PaymentMethod.Get(ENC."Payment Method Code");
@@ -686,7 +683,7 @@ xmlport 50100 "EI-ExportLocalInvoice"
                 {
                     trigger OnBeforePassVariable()
                     begin
-                        TOT_5 := ConvertSTR(delchr(format(TotalAmountInclVAT(ENC."No.")), '=', '.'), ',', '.');
+                        TOT_5 := ConvertSTR(delchr(format(TotalAmountInclVATDesc(ENC."No.")), '=', '.'), ',', '.');
                     end;
                 }
 
@@ -700,7 +697,10 @@ xmlport 50100 "EI-ExportLocalInvoice"
 
                 textelement(TOT_7)
                 {
-
+                    trigger OnBeforePassVariable()
+                    begin
+                        TOT_7 := ConvertSTR(delchr(format(TotalAmountInclVAT(ENC."No.")), '=', '.'), ',', '.');
+                    end;
                 }
 
                 textelement(TOT_8)
@@ -1395,5 +1395,23 @@ xmlport 50100 "EI-ExportLocalInvoice"
             discountAmount += invoiceLines."Line Discount Amount";
         end;
         rtDiscountAmount := discountAmount;
+    end;
+
+    local procedure TotalAmountInclVATDesc(pDocNo: Code[20]) rtAmountInclVAT: Decimal;
+    var
+        invoiceLines: Record "Sales Invoice Line";
+        amountInclVAT: Decimal;
+        discountAmount: Decimal;
+    begin
+        rtAmountInclVAT := 0;
+
+        Clear(invoiceLines);
+        invoiceLines.SetRange("Document No.", pDocNo);
+        invoiceLines.SetFilter(Quantity, '<>%1', 0);
+        if invoiceLines.FindSet then begin
+            amountInclVAT += invoiceLines."Amount Including VAT";
+            discountAmount += invoiceLines."Line Discount Amount";
+        end;
+        rtAmountInclVAT := amountInclVAT - discountAmount;
     end;
 }
